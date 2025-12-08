@@ -7,37 +7,31 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import NavMain from "./nav-main"
+import Link from "next/link"
+import NavFooter from "./nav-footer"
+
+const navItems = [
+  { id: "/", label: "DASHBOARD" },
+  { id: "import", label: "IMPORT CSV" },
+  { id: "design", label: "DESIGN EMAIL" },
+  { id: "attachments", label: "ATTACHMENTS" },
+  { id: "configure", label: "CONFIGURE" },
+]
 
 const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        {/* <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </a> 
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu> */}
-        Sidebar Header
+        <div className="px-6 py-6 border-b border-border shrink-0">
+          <div className="text-xs font-black tracking-widest text-muted-foreground">MENU</div>
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        {/* <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
-        This is Sidebar!!
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
-        Settings
+       <NavFooter />
       </SidebarFooter>
     </Sidebar>
   )
