@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 
 interface Campaign {
   id: string
@@ -81,12 +82,14 @@ export default function CampaignList() {
                   <TableCell className="p-4 text-sm font-mono">{campaign.recipientCount.toLocaleString()}</TableCell>
                   <TableCell className="p-4 text-sm font-mono text-muted-foreground">{campaign.sentDate}</TableCell>
                   <TableCell className="p-4">
-                    <span className="inline-block px-3 py-1 border border-border text-xs font-semibold tracking-wide uppercase">
+                    {/* <span className="inline-block px-3 py-1 border border-border text-xs font-semibold tracking-wide uppercase"> */}
+                    <Badge>
                       {campaign.status}
-                    </span>
+                    </Badge>
+
                   </TableCell>
                   <TableCell className="p-4">
-                    <Button className="text-xs px-3 py-1 bg-muted text-foreground hover:bg-muted/80 border border-border font-semibold tracking-wide">
+                    <Button variant={"outline"}>
                       VIEW
                     </Button>
                   </TableCell>
