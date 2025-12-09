@@ -3,7 +3,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 const Header = () => {
   return (
     <header className="border-b border-border bg-card sticky top-0 z-10 md:relative md:top-auto">
-      <div className="px-6 py-8 flex items-center gap-4">
+      <div className="px-4 py-8 md:px-8 md:py-8 flex items-center gap-4">
         <SidebarTrigger className="p-2 border-2 border-foreground bg-background hover:bg-muted transition-colors shrink-0 rounded-none" />
         <div className="flex-1">
           <h1 className="text-3xl md:text-4xl font-black tracking-tight">

@@ -13,9 +13,9 @@ import NavFooter from "./nav-footer"
 
 const navItems = [
   { id: "/", label: "DASHBOARD" },
-  { id: "import", label: "IMPORT CSV" },
-  { id: "design", label: "DESIGN EMAIL" },
-  { id: "attachments", label: "ATTACHMENTS" },
+  { id: "import", label: "IMPORT" },
+  { id: "design", label: "DESIGN" },
+  { id: "attachments", label: "ATTACH" },
   { id: "configure", label: "CONFIGURE" },
 ]
 
