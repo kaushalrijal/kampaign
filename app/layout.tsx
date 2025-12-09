@@ -4,6 +4,7 @@ import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Header from "@/components/shared/header/header";
 import AppSidebar from "@/components/shared/sidebar/sidebar";
+import { APP_DESCRIPTION, APP_NAME } from "@/lib/contants";
 
 const dmSans = DM_Sans({
   variable: "--font-sans",
@@ -16,9 +17,12 @@ const firaMono = Fira_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Kampaign",
-  description: "Bulk Email Automation",
+export const metadata:Metadata = {
+  title: {
+    template: `%s | Dokaan`,
+    default: APP_NAME,
+  },
+  description: APP_DESCRIPTION,
 };
 
 export default function RootLayout({
