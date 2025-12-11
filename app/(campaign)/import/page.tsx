@@ -14,43 +14,46 @@ import { parseFile } from "@/lib/parser/parseFile";
 import { useState } from "react";
 
 const ImportPage = () => {
+  const [contacts, setContacts] = useState<Array<Record<string, string>>>([]);
+  const [headers, setHeaders] = useState<Array<string>>([]);
 
-  const [contacts, setContacts] = useState(null);
-  const [headers, setHeaders] = useState(null);
-
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("file select triggered")
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    console.log("file select triggered");
     const file = event.target.files![0];
-    console.log(file)
-    if(!file) {
-      console.log("no file")
+    console.log(file);
+    if (!file) {
+      console.log("no file");
       return;
-    };
+    }
 
     const rows = await parseFile(file);
-    const headers = Object.keys(rows[0])
-    console.log(rows)
-    console.log(headers)
+    const headers = Object.keys(rows[0]);
+    setContacts(rows);
+    setHeaders(headers);
+    console.log(rows);
+    console.log(headers);
     return;
   };
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.currentTarget.classList.add("bg-primary/10")
-  }
+    e.preventDefault();
+    e.currentTarget.classList.add("bg-primary/10");
+  };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("bg-primary/10")
-  }
+    e.currentTarget.classList.remove("bg-primary/10");
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.currentTarget.classList.remove("bg-primary/10")
-    const file = e.dataTransfer.files?.[0]
+    e.preventDefault();
+    e.currentTarget.classList.remove("bg-primary/10");
+    const file = e.dataTransfer.files?.[0];
     if (file) {
-      handleFileSelect({ target: { files: e.dataTransfer.files } } as any)
+      handleFileSelect({ target: { files: e.dataTransfer.files } } as any);
     }
-  }
+  };
   return (
     <div className="space-y-8 mb-8">
       <div>
@@ -92,91 +95,71 @@ const ImportPage = () => {
       </div>
 
       {/* Only visible after data is imported!!! */}
-      {/* Imported Data */}
-      <div className="space-y-6">
-        {/* Column Info */}
-        <div className="border border-border">
-          <div className="bg-secondary px-6 py-4 border-b border-border flex items-center justify-between">
-            <h3 className="text-sm font-black tracking-wide">
-              COLUMNS DETECTED (x)
-            </h3>
-            <div className="text-xs font-mono px-2 py-1 bg-background border border-border">
-              y rows
+      {contacts.length > 0 && (
+        // Column Info
+        // Imported Data
+        <div className="space-y-6">
+          <div className="border border-border">
+            <div className="bg-secondary px-6 py-4 border-b border-border flex items-center justify-between">
+              <h3 className="text-sm font-black tracking-wide">
+                COLUMNS DETECTED ({headers.length})
+              </h3>
+              <div className="text-xs font-mono px-2 py-1 bg-background border border-border">
+                {contacts.length} rows
+              </div>
+            </div>
+            <div className="px-6 py-4 flex flex-wrap gap-2">
+              {headers.map((header) => (
+                <Badge key={header}>{header}</Badge>
+              ))}
             </div>
           </div>
-          <div className="px-6 py-4 flex flex-wrap gap-2">
-            <Badge>
-              {"{"}
-              {"Header 1"}
-              {"}"}
-            </Badge>
-            <Badge>
-              {"{"}
-              {"Header 2"}
-              {"}"}
-            </Badge>
-            <Badge>
-              {"{"}
-              {"Header 3"}
-              {"}"}
-            </Badge>
-          </div>
-        </div>
 
-        {/* Preview imported file */}
-        <div className="border border-border">
-          <div className="bg-secondary px-6 py-4 border-b border-border">
-            <h3 className="text-sm font-black tracking-wide">PREVIEW</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="border-b border-border bg-muted">
-                <TableRow>
-                  {/* TODO: MAP WITH TABLE HEADERS */}
-                  <TableHead className="px-6 py-3 text-left font-semibold tracking-wide text-xs uppercase">
-                    {"header1"}
-                  </TableHead>
-                  <TableHead className="px-6 py-3 text-left font-semibold tracking-wide text-xs uppercase">
-                    {"header2"}
-                  </TableHead>
-                  <TableHead className="px-6 py-3 text-left font-semibold tracking-wide text-xs uppercase">
-                    {"header3"}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow className="border-b border-border hover:bg-muted/50 transition-colors">
-                  {/* TODO: MAP WITH REAL DATA */}
-                  <TableCell className="px-6 py-3 text-sm font-mono text-foreground">
-                    Some Data
-                  </TableCell>
-                  <TableCell className="px-6 py-3 text-sm font-mono text-foreground">
-                    Some More data
-                  </TableCell>
-                  <TableCell className="px-6 py-3 text-sm font-mono text-foreground">
-                    Some more more data
-                  </TableCell>
-                </TableRow>
-                <TableRow className="border-b border-border hover:bg-muted/50 transition-colors">
-                  {/* TODO: MAP WITH REAL DATA */}
-                  <TableCell className="px-6 py-3 text-sm font-mono text-foreground">
-                    Some Data
-                  </TableCell>
-                  <TableCell className="px-6 py-3 text-sm font-mono text-foreground">
-                    Some More data
-                  </TableCell>
-                  <TableCell className="px-6 py-3 text-sm font-mono text-foreground">
-                    Some more more data
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            <div className="px-6 py-3 text-xs text-muted-foreground bg-muted border-t border-border">
-              ... and some more rows
+          <div className="border border-border">
+            <div className="bg-secondary px-6 py-4 border-b border-border">
+              <h3 className="text-sm font-black tracking-wide">PREVIEW</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <Table className="max-w-full">
+                <TableHeader className="border-b border-border bg-muted">
+                  <TableRow>
+                    {headers.map((header) => (
+                      <TableHead
+                        key={header}
+                        className="px-6 py-3 text-left font-semibold tracking-wide text-xs uppercase"
+                      >
+                        {header}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {contacts.slice(0, 10).map((contact) => (
+                    <TableRow
+                      className="border-b border-border hover:bg-muted/50 transition-colors"
+                      key={Object.keys(contact)[0]}
+                    >
+                      {headers.map((header) => (
+                        <TableCell
+                          key={header}
+                          className="px-6 py-3 text-sm font-mono text-foreground"
+                        >
+                          {contact[header]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="px-6 py-3 text-xs text-muted-foreground bg-muted border-t border-border">
+                {contacts.length > 10 && (
+                  <>... and {contacts.length - 10} more rows)</>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
