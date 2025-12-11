@@ -20,13 +20,14 @@ const ImportPage = () => {
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log("file select triggered");
     const file = event.target.files![0];
     console.log(file);
     if (!file) {
-      console.log("no file");
       return;
     }
+
+    setContacts([]);
+    setHeaders([]);
 
     const rows = await parseFile(file);
     const headers = Object.keys(rows[0]);
@@ -119,8 +120,8 @@ const ImportPage = () => {
             <div className="bg-secondary px-6 py-4 border-b border-border">
               <h3 className="text-sm font-black tracking-wide">PREVIEW</h3>
             </div>
-            <div className="overflow-x-auto">
-              <Table className="max-w-full">
+            <div className="overflow-x-auto w-full">
+              <Table className="w-full table-auto">
                 <TableHeader className="border-b border-border bg-muted">
                   <TableRow>
                     {headers.map((header) => (
@@ -151,11 +152,11 @@ const ImportPage = () => {
                   ))}
                 </TableBody>
               </Table>
-              <div className="px-6 py-3 text-xs text-muted-foreground bg-muted border-t border-border">
-                {contacts.length > 10 && (
-                  <>... and {contacts.length - 10} more rows)</>
-                )}
-              </div>
+              {contacts.length > 10 && (
+                <div className="px-6 py-3 text-xs text-muted-foreground bg-muted border-t border-border">
+                  ... and {contacts.length - 10} more rows)
+                </div>
+              )}
             </div>
           </div>
         </div>

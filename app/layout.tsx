@@ -17,7 +17,7 @@ const firaMono = Fira_Mono({
   subsets: ["latin"],
 });
 
-export const metadata:Metadata = {
+export const metadata: Metadata = {
   title: {
     template: `%s | Dokaan`,
     default: APP_NAME,
@@ -27,22 +27,21 @@ export const metadata:Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body
-        className={`${dmSans.variable} ${firaMono.variable} antialiased`}
-      >
+      <body className={`${dmSans.variable} ${firaMono.variable} antialiased`}>
         <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <Header />
-            <main className="flex-1 overflow-auto overflow-x-hidden md:overflow-x-hidden px-4 py-8 md:px-8 md:py-8 text-left">
-            {children}
-          </main>
-          </SidebarInset>
+          {/* important: explicit flex container that constrains children */}
+          <div className="flex min-h-screen w-full overflow-x-hidden">
+            <AppSidebar />
+            <SidebarInset className="flex-1 min-w-0">
+              <Header />
+              <main className="flex-1 min-w-0 overflow-auto px-4 py-8 md:px-8 md:py-8 text-left">
+                {children}
+              </main>
+            </SidebarInset>
+          </div>
         </SidebarProvider>
       </body>
     </html>
