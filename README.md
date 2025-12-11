@@ -118,9 +118,6 @@ You switch between them based on what you are doing.
 
 Security notes
 	•	SMTP credentials are kept in the local .env file or set through the settings page
-## Contributing
-
-Pull requests are welcome. Please feel free to open an issue for bugs or feature requests.sswords if shared or compromised
 
 # Contribution
 
