@@ -135,10 +135,10 @@ const ImportPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {contacts.slice(0, 10).map((contact) => (
+                  {contacts.slice(0, 10).map((contact, idx) => (
                     <TableRow
                       className="border-b border-border hover:bg-muted/50 transition-colors"
-                      key={Object.keys(contact)[0]}
+                      key={idx}
                     >
                       {headers.map((header) => (
                         <TableCell
