@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -12,9 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { parseFile } from "@/lib/parser/parseFile";
-import { ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 const ImportPage = () => {
+
+  const [contacts, setContacts] = useState(null);
+  const [headers, setHeaders] = useState(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("file select triggered")
@@ -64,9 +66,9 @@ const ImportPage = () => {
       {/* Drag n drop area */}
       <div>
         <div
-          // onDragOver={handleDragOver}
-          // onDragLeave={handleDragLeave}
-          // onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
           className="border-2 border-dashed border-border p-12 text-center bg-muted/20 transition-colors cursor-pointer hover:border-foreground w-full"
         >
           <label className="block cursor-pointer">
