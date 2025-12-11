@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -10,12 +11,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { parseFile } from "@/lib/parser/parseFile";
 import { ChevronRight } from "lucide-react";
 
 const ImportPage = () => {
-  const handleFileSelect = () => {
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("file select triggered")
+    const file = event.target.files![0];
+    console.log(file)
+    if(!file) {
+      console.log("no file")
+      return;
+    };
+
+    const rows = await parseFile(file);
+    const headers = Object.keys(rows[0])
+    console.log(rows)
+    console.log(headers)
     return;
   };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.currentTarget.classList.add("bg-primary/10")
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.currentTarget.classList.remove("bg-primary/10")
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.currentTarget.classList.remove("bg-primary/10")
+    const file = e.dataTransfer.files?.[0]
+    if (file) {
+      handleFileSelect({ target: { files: e.dataTransfer.files } } as any)
+    }
+  }
   return (
     <div className="space-y-8 mb-8">
       <div>
@@ -37,11 +70,11 @@ const ImportPage = () => {
           className="border-2 border-dashed border-border p-12 text-center bg-muted/20 transition-colors cursor-pointer hover:border-foreground w-full"
         >
           <label className="block cursor-pointer">
-            <input
+            <Input
               type="file"
-              accept=".csv"
+              accept=".csv,.xls,.xlsx"
               onChange={handleFileSelect}
-              className="hidden"
+              className="hidden w-full"
             />
             <div className="space-y-2">
               <div className="text-sm font-black tracking-wide">
