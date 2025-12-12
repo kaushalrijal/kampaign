@@ -8,7 +8,7 @@ const DesignPage = () => {
       <div>
         <h2 className="text-2xl font-black tracking-tight mb-2">DESIGN EMAIL TEMPLATE</h2>
         <p className="text-muted-foreground text-sm">
-          Create your subject line and email body. Use available columns from your CSV for personalization.
+          Create your subject and email body. Use available columns from your Contacts Table for personalization.
         </p>
       </div>
 
