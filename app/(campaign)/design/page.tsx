@@ -57,6 +57,7 @@ const DesignPage = () => {
               {/* autocomplete for headers */}
               <section
                 aria-labelledby="available-headers-title"
+                className="mt-4"
               >
                 <div className="flex items-center justify-between">
                   <Label>
@@ -76,7 +77,8 @@ const DesignPage = () => {
                       key={header}
                       type="button"
                       onClick={() => editorRef.current?.insertHeader(header)}
-                      className="px-2 py-1 bg-black text-white font-mono text-xs hover:bg-neutral-700 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 cursor-pointer"
+                      className="px-2 font-mono text-xs cursor-pointer"
+                      variant={"secondary"}
                       aria-label={`Insert ${header} header`}
                     >
                       {"{" + header + "}"}

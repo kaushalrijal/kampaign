@@ -581,7 +581,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
           )}
         </div>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-bold tracking-wider uppercase">HTML OUTPUT</label>
             <button
@@ -598,7 +598,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
           <pre className="p-4 bg-neutral-100 border-2 border-black font-mono text-sm overflow-x-auto whitespace-pre-wrap break-all max-h-[200px] overflow-y-auto">
             {htmlOutput || "<p>Start typing to see HTML output...</p>"}
           </pre>
-        </div>
+        </div> */}
 
         <Dialog open={linkDialogOpen} onOpenChange={(open) => !open && handleLinkCancel()}>
           <DialogContent className="border-4 border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white sm:max-w-md">
