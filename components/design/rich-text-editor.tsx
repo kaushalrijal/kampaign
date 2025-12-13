@@ -30,27 +30,24 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  ActiveState,
+  runExecCommand,
+  computeActiveState,
+  toggleFormatBlock,
+  saveSelection as utilsSaveSelection,
+  restoreSelection as utilsRestoreSelection,
+  getCaretCoordinates as utilsGetCaretCoordinates,
+  getCurrentWord as utilsGetCurrentWord,
+  insertHeaderAtCursor as utilsInsertHeaderAtCursor,
+  replaceCurrentWordWithHeader as utilsReplaceCurrentWordWithHeader,
+} from "@/lib/rich-text-utils"
 
 interface RichTextEditorProps {
   headers?: string[]
 }
 
-interface ActiveState {
-  bold: boolean
-  italic: boolean
-  underline: boolean
-  strikethrough: boolean
-  h1: boolean
-  h2: boolean
-  h3: boolean
-  alignLeft: boolean
-  alignCenter: boolean
-  alignRight: boolean
-  bulletList: boolean
-  numberedList: boolean
-  link: boolean
-  code: boolean
-}
+
 
 const SHORTCUTS = {
   bold: { key: "b", modifier: true, label: "⌘B" },
@@ -102,46 +99,9 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   })
 
   const checkActiveState = useCallback(() => {
-    const newState: ActiveState = {
-      bold: document.queryCommandState("bold"),
-      italic: document.queryCommandState("italic"),
-      underline: document.queryCommandState("underline"),
-      strikethrough: document.queryCommandState("strikeThrough"),
-      h1: false,
-      h2: false,
-      h3: false,
-      alignLeft: document.queryCommandState("justifyLeft"),
-      alignCenter: document.queryCommandState("justifyCenter"),
-      alignRight: document.queryCommandState("justifyRight"),
-      bulletList: document.queryCommandState("insertUnorderedList"),
-      numberedList: document.queryCommandState("insertOrderedList"),
-      link: false,
-      code: false,
-    }
-
-    if (!newState.alignLeft && !newState.alignCenter && !newState.alignRight) {
-      newState.alignLeft = true
-    }
-
-    const selection = window.getSelection()
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0)
-      let node: Node | null = range.startContainer
-
-      while (node && node !== editorRef.current) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          const tagName = (node as Element).tagName.toLowerCase()
-          if (tagName === "h1") newState.h1 = true
-          if (tagName === "h2") newState.h2 = true
-          if (tagName === "h3") newState.h3 = true
-          if (tagName === "a") newState.link = true
-          if (tagName === "pre") newState.code = true
-        }
-        node = node.parentNode
-      }
-    }
-
-    setActiveState(newState)
+    if (!editorRef.current) return
+    const state = computeActiveState(editorRef.current)
+    setActiveState(state)
   }, [])
 
   const updateOutput = useCallback(() => {
@@ -153,7 +113,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
   const execCommand = useCallback(
     (command: string, value?: string) => {
-      document.execCommand(command, false, value)
+      runExecCommand(command, value)
       editorRef.current?.focus()
       updateOutput()
       checkActiveState()
@@ -163,32 +123,9 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
   const formatBlock = useCallback(
     (tag: string) => {
-      const selection = window.getSelection()
-      if (selection && selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0)
-        let node: Node | null = range.startContainer
-        let isCurrentlyInTag = false
-
-        while (node && node !== editorRef.current) {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            const tagName = (node as Element).tagName.toLowerCase()
-            if (tagName === tag) {
-              isCurrentlyInTag = true
-              break
-            }
-          }
-          node = node.parentNode
-        }
-
-        if (isCurrentlyInTag) {
-          document.execCommand("formatBlock", false, "<p>")
-        } else {
-          document.execCommand("formatBlock", false, `<${tag}>`)
-        }
-      } else {
-        document.execCommand("formatBlock", false, `<${tag}>`)
+      if (editorRef.current) {
+        toggleFormatBlock(editorRef.current, tag)
       }
-
       editorRef.current?.focus()
       updateOutput()
       checkActiveState()
@@ -197,25 +134,16 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   )
 
   const saveSelection = useCallback(() => {
-    const selection = window.getSelection()
-    if (selection && selection.rangeCount > 0) {
-      setSavedSelection(selection.getRangeAt(0).cloneRange())
-    }
+    setSavedSelection(utilsSaveSelection())
   }, [])
 
   const restoreSelection = useCallback(() => {
-    if (savedSelection) {
-      const selection = window.getSelection()
-      if (selection) {
-        selection.removeAllRanges()
-        selection.addRange(savedSelection)
-      }
-    }
+    utilsRestoreSelection(savedSelection)
   }, [savedSelection])
 
   const toggleLink = useCallback(() => {
     if (activeState.link) {
-      document.execCommand("unlink", false)
+      runExecCommand("unlink")
       editorRef.current?.focus()
       updateOutput()
       checkActiveState()
@@ -231,7 +159,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       restoreSelection()
       editorRef.current?.focus()
       setTimeout(() => {
-        document.execCommand("createLink", false, linkUrl)
+        runExecCommand("createLink", linkUrl)
         updateOutput()
         checkActiveState()
       }, 10)
@@ -249,44 +177,11 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   }, [])
 
   const getCaretCoordinates = () => {
-    const selection = window.getSelection()
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0)
-      const rect = range.getBoundingClientRect()
-      const editorRect = editorRef.current?.getBoundingClientRect()
-      if (editorRect) {
-        return {
-          top: rect.bottom - editorRect.top + 4,
-          left: rect.left - editorRect.left,
-        }
-      }
-    }
-    return { top: 0, left: 0 }
+    if (!editorRef.current) return { top: 0, left: 0 }
+    return utilsGetCaretCoordinates(editorRef.current)
   }
 
-  const getCurrentWord = () => {
-    const selection = window.getSelection()
-    if (!selection || selection.rangeCount === 0) return ""
-
-    const range = selection.getRangeAt(0)
-    const node = range.startContainer
-
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent || ""
-      const offset = range.startOffset
-      const beforeCaret = text.slice(0, offset)
-      const lastBraceIndex = beforeCaret.lastIndexOf("{")
-      const lastSpaceIndex = beforeCaret.lastIndexOf(" ")
-
-      if (lastBraceIndex !== -1 && lastBraceIndex > lastSpaceIndex) {
-        return "{" + beforeCaret.slice(lastBraceIndex + 1)
-      }
-
-      const words = beforeCaret.split(/\s/)
-      return words[words.length - 1] || ""
-    }
-    return ""
-  }
+  const getCurrentWord = () => utilsGetCurrentWord()
 
   const handleInput = () => {
     const word = getCurrentWord()
@@ -342,34 +237,9 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   const insertHeaderAtCursor = useCallback(
     (header: string) => {
       editorRef.current?.focus()
-
-      const selection = window.getSelection()
-      if (!selection || selection.rangeCount === 0) {
-        const textNode = document.createTextNode(`{${header}} `)
-        editorRef.current?.appendChild(textNode)
-
-        const range = document.createRange()
-        range.selectNodeContents(editorRef.current!)
-        range.collapse(false)
-        selection!.removeAllRanges()
-        selection!.addRange(range)
-      } else {
-        const range = selection.getRangeAt(0)
-
-        const textNode = document.createTextNode(`{${header}}`)
-
-        range.deleteContents()
-        range.insertNode(textNode)
-
-        const spaceNode = document.createTextNode(" ")
-        range.setStartAfter(textNode)
-        range.insertNode(spaceNode)
-        range.setStartAfter(spaceNode)
-        range.collapse(true)
-        selection.removeAllRanges()
-        selection.addRange(range)
+      if (editorRef.current) {
+        utilsInsertHeaderAtCursor(editorRef.current, header)
       }
-
       setShowSuggestions(false)
       updateOutput()
     },
@@ -377,43 +247,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   )
 
   const insertHeader = (header: string) => {
-    const selection = window.getSelection()
-    if (!selection || selection.rangeCount === 0) return
-
-    const range = selection.getRangeAt(0)
-    const node = range.startContainer
-
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent || ""
-      const offset = range.startOffset
-      const beforeCaret = text.slice(0, offset)
-      const afterCaret = text.slice(offset)
-
-      const lastSpaceIndex = beforeCaret.lastIndexOf(" ")
-      const wordStart = lastSpaceIndex === -1 ? 0 : lastSpaceIndex + 1
-      const beforeWord = text.slice(0, wordStart)
-
-      const headerText = `{${header}}`
-
-      const beforeTextNode = document.createTextNode(beforeWord)
-      const headerTextNode = document.createTextNode(headerText)
-      const afterTextNode = document.createTextNode(" " + afterCaret)
-
-      const parent = node.parentNode
-      if (parent) {
-        parent.insertBefore(beforeTextNode, node)
-        parent.insertBefore(headerTextNode, node)
-        parent.insertBefore(afterTextNode, node)
-        parent.removeChild(node)
-
-        const newRange = document.createRange()
-        newRange.setStartAfter(afterTextNode)
-        newRange.collapse(true)
-        selection.removeAllRanges()
-        selection.addRange(newRange)
-      }
-    }
-
+    utilsReplaceCurrentWordWithHeader(header)
     setShowSuggestions(false)
     updateOutput()
   }
@@ -478,7 +312,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       execCommand("justifyLeft")
       return
     }
-    if (modifier && e.shiftKey && e.key.toLowerCase() === "e" && !e.altKey && !e.shiftKey) {
+    if (modifier && !e.shiftKey && e.key.toLowerCase() === "e" && !e.altKey) {
       e.preventDefault()
       execCommand("justifyCenter")
       return
@@ -558,10 +392,6 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   return (
     <TooltipProvider>
       <div className="space-y-6">
-        <label id="editor-label" className="block text-xs font-bold tracking-wider uppercase mb-2">
-          RICH TEXT EDITOR
-        </label>
-
         <div
           className="bg-neutral-200 border-2 border-black p-2 flex flex-wrap gap-1"
           role="toolbar"
@@ -800,7 +630,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 />
               </div>
             </div>
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-2 sm:gap-1">
               <Button
                 type="button"
                 variant="outline"
