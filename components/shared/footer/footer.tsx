@@ -13,7 +13,7 @@ const PaginationFooter = () => {
 
     console.log(current)
   return (
-    <div className="flex gap-4 justify-between pt-8 border-t border-border">
+    <div className="flex gap-4 justify-between mt-8 pt-8 border-t border-border">
       <Button variant={"secondary"} asChild={current !== 0}
         className={`px-6 py-3 border border-border bg-background text-foreground font-semibold text-sm tracking-wide hover:bg-muted transition-colors ${current === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
         disabled={current === 0}

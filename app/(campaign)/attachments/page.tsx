@@ -1,9 +1,9 @@
 "use client";
 
-import { DragDropUpload } from "@/components/shared/drag-drop-upload"
+import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { useState } from "react"
+import { useState } from "react";
 
 interface FileItem {
   file: File;
@@ -11,25 +11,27 @@ interface FileItem {
 }
 
 const AttachmentsPage = () => {
-  const [files, setFiles] = useState<FileItem[]>([])
-  
+  const [files, setFiles] = useState<FileItem[]>([]);
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || [])
+    const selectedFiles = Array.from(event.target.files || []);
     const newFiles = selectedFiles.map((file) => ({
       file,
       id: `${file.name}-${Date.now()}-${Math.random()}`,
-    }))
-    setFiles((prev) => [...prev, ...newFiles])
-  }
+    }));
+    setFiles((prev) => [...prev, ...newFiles]);
+  };
 
   const removeFile = (id: string) => {
-    setFiles((prev) => prev.filter((file) => file.id !== id))
-  }
+    setFiles((prev) => prev.filter((file) => file.id !== id));
+  };
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-2">ATTACHMENTS & FILE ASSIGNMENT</h2>
+        <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-2">
+          ATTACHMENTS & FILE ASSIGNMENT
+        </h2>
         <p className="text-muted-foreground text-sm">
           Upload files and configure how they're distributed to recipients.
         </p>
@@ -46,20 +48,26 @@ const AttachmentsPage = () => {
         />
       </div>
 
-      {files.length > 0 && (
+      {files.length > 0 ? (
         <>
           {/* Files List */}
           <div className="border border-border">
             <div className="bg-secondary px-4 md:px-6 py-4 border-b border-border">
-              <h3 className="text-sm font-black tracking-wide">UPLOADED FILES ({files.length})</h3>
+              <h3 className="text-sm font-black tracking-wide">
+                UPLOADED FILES ({files.length})
+              </h3>
             </div>
             <div className="divide-y divide-border">
               {files.map((item) => (
                 <div key={item.id} className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-sm font-mono break-all">{item.file.name}</div>
-                      <div className="text-xs text-muted-foreground">{(item.file.size / 1024).toFixed(2)} KB</div>
+                      <div className="font-semibold text-sm font-mono break-all">
+                        {item.file.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {(item.file.size / 1024).toFixed(2)} KB
+                      </div>
                     </div>
 
                     <div className="flex gap-2 flex-wrap">
@@ -77,9 +85,13 @@ const AttachmentsPage = () => {
             </div>
           </div>
         </>
+      ) : (
+        <div className="text-center text-muted-foreground">
+          <p className="text-sm">Upload files to get started</p>
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AttachmentsPage
+export default AttachmentsPage;
