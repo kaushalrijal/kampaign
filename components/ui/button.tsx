@@ -13,7 +13,7 @@ const buttonVariants = cva(
           "inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold text-sm tracking-wide border border-foreground hover:opacity-90 transition-opacity",
 
         destructive:
-          "inline-flex items-center gap-2 px-6 py-3 bg-destructive text-destructive-foreground font-black text-sm tracking-wide hover:opacity-90 transition-opacity border border-destructive",
+          "inline-flex items-center gap-2 px-6 py-3 bg-destructive text-white font-black text-sm tracking-wide hover:opacity-90 transition-opacity border border-destructive",
 
         secondary:
           "px-6 py-3 border border-border bg-background text-foreground font-semibold text-sm tracking-wide hover:bg-muted transition-colors",
