@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@/components/ui/input"
+import { DragDropUpload } from "@/components/shared/drag-drop-upload"
 import { useState } from "react"
 
 interface FileItem {
@@ -20,25 +20,6 @@ const AttachmentsPage = () => {
     setFiles((prev) => [...prev, ...newFiles])
   }
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.currentTarget.classList.add("border-foreground")
-  }
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("border-foreground")
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.currentTarget.classList.remove("border-foreground")
-    const droppedFiles = Array.from(e.dataTransfer.files || [])
-    const newFiles = droppedFiles.map((file) => ({
-      file,
-      id: `${file.name}-${Date.now()}-${Math.random()}`,
-    }))
-    setFiles((prev) => [...prev, ...newFiles])
-  }
   return (
     <div className="space-y-8">
       <div>
@@ -50,35 +31,19 @@ const AttachmentsPage = () => {
 
       <div>
         {files.map((file) => (
-          <div>{file.file.name}</div>
+          <div key={file.id as string}>{file.file.name}</div>
         ))}
       </div>
 
       {/* Drag n drop area */}
       <div>
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className="border-2 border-dashed border-border p-12 text-center bg-muted/20 transition-colors cursor-pointer hover:border-foreground w-full"
-        >
-          <label className="block cursor-pointer">
-            <Input
-              type="file"
-              multiple
-              onChange={handleFileSelect}
-              className="hidden w-full"
-            />
-            <div className="space-y-2">
-              <div className="text-sm font-black tracking-wide">
-                DRAG FILE HERE OR CLICK TO BROWSE
-              </div>
-              <div className="text-xs text-muted-foreground">
-                PDF, DOC, Images and More
-              </div>
-            </div>
-          </label>
-        </div>
+        <DragDropUpload
+          onFileSelect={handleFileSelect}
+          multiple={true}
+          title="DRAG FILE HERE OR CLICK TO BROWSE"
+          description="PDF, DOC, Images and More"
+          dragHighlightClass="border-foreground"
+        />
       </div>
     </div>
   )

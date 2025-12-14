@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import {
   Table,
   TableBody,
@@ -38,23 +38,6 @@ const ImportPage = () => {
     return;
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.currentTarget.classList.add("bg-primary/10");
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("bg-primary/10");
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove("bg-primary/10");
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      handleFileSelect({ target: { files: e.dataTransfer.files } } as any);
-    }
-  };
   return (
     <div className="space-y-8 mb-8">
       <div>
@@ -69,30 +52,14 @@ const ImportPage = () => {
 
       {/* Drag n drop area */}
       <div>
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className="border-2 border-dashed border-border p-12 text-center bg-muted/20 transition-colors cursor-pointer hover:border-foreground w-full"
-        >
-          <label className="block cursor-pointer">
-            <Input
-              type="file"
-              accept=".csv,.xls,.xlsx"
-              onChange={handleFileSelect}
-              className="hidden w-full"
-            />
-            <div className="space-y-2">
-              <div className="text-sm font-black tracking-wide">
-                DRAG FILE HERE OR CLICK TO BROWSE
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Supports CSV and Excel formats. Columns will be mapped
-                automatically.
-              </div>
-            </div>
-          </label>
-        </div>
+        <DragDropUpload
+          onFileSelect={handleFileSelect}
+          accept=".csv,.xls,.xlsx"
+          multiple={false}
+          title="DRAG FILE HERE OR CLICK TO BROWSE"
+          description="Supports CSV and Excel formats. Columns will be mapped automatically."
+          dragHighlightClass="bg-primary/10"
+        />
       </div>
 
       {/* Only visible after data is imported!!! */}
