@@ -4,25 +4,12 @@ import { RichTextEditor } from "@/components/design/rich-text-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useKampaignStore } from "@/lib/store/kampaign-store";
+import Link from "next/link";
 import { useRef } from "react";
 
-// Example headers array for autocomplete
-const headers = [
-  "first_name",
-  "last_name",
-  "email",
-  "company",
-  "phone",
-  "address",
-  "city",
-  "state",
-  "zip_code",
-  "country",
-  "job_title",
-  "department",
-];
-
 const DesignPage = () => {
+  const {headers, subject, setSubject} = useKampaignStore()
   const editorRef = useRef<{ insertHeader: (header: string) => void } | null>(
     null
   );
@@ -49,6 +36,8 @@ const DesignPage = () => {
               <Input
                 type="text"
                 placeholder="Requesting Sponsorship for Hackathon"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
               />
             </div>
             <div>
@@ -72,7 +61,7 @@ const DesignPage = () => {
                   role="list"
                   aria-label="Available headers for insertion"
                 >
-                  {headers.map((header) => (
+                  {headers.length>0 ? headers.map((header) => (
                     <Button
                       key={header}
                       type="button"
@@ -83,7 +72,9 @@ const DesignPage = () => {
                     >
                       {"{" + header + "}"}
                     </Button>
-                  ))}
+                  )) : (
+                    <p className="text-sm text-neutral-600"><Link href={"/import"} className="underline">Import</Link> contacts to see available headers.</p>
+                  )}
                 </div>
               </section>
             </div>

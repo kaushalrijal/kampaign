@@ -10,10 +10,14 @@ interface KampaignState {
     attachments: FileItem[];
     contacts: Record<string, string>[];
     headers: Array<string>;
+    subject: string;
+    htmlOutput: string;
 
     setContacts: (contacts: Record<string, string>[])=>void;
     setHeaders: (headers: string[])=>void;
     setCampaignName: (name:string) => void;
+    setSubject: (subject: string) => void;
+    setHtmlOutput: (body: string) => void;
 }
 
 export const useKampaignStore = create<KampaignState>((set) => ({
@@ -21,8 +25,12 @@ export const useKampaignStore = create<KampaignState>((set) => ({
     attachments: [],
     contacts: [],
     headers: [],
+    subject: "",
+    htmlOutput: "",
 
     setContacts: (contacts: Record<string, string>[]) => set({contacts}),
     setHeaders: (headers: string[])=>set({headers}),
     setCampaignName: (name:string) => set({campaignName: name}),
+    setSubject: (subject: string) => set({subject}),
+    setHtmlOutput: (body: string) => set({htmlOutput: body})
 }))
