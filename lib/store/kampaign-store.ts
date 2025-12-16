@@ -18,19 +18,26 @@ interface KampaignState {
     setCampaignName: (name:string) => void;
     setSubject: (subject: string) => void;
     setHtmlOutput: (body: string) => void;
+    setAttachments: (attachments: FileItem[] | ((prev: FileItem[]) => FileItem[])) => void;
 }
 
 export const useKampaignStore = create<KampaignState>((set) => ({
     campaignName: "",
-    attachments: [],
     contacts: [],
     headers: [],
     subject: "",
     htmlOutput: "",
+    attachments: [],
 
     setContacts: (contacts: Record<string, string>[]) => set({contacts}),
     setHeaders: (headers: string[])=>set({headers}),
     setCampaignName: (name:string) => set({campaignName: name}),
     setSubject: (subject: string) => set({subject}),
-    setHtmlOutput: (body: string) => set({htmlOutput: body})
+    setHtmlOutput: (body: string) => set({htmlOutput: body}),
+    setAttachments: (attachments) => 
+      set((state) => ({
+        attachments: typeof attachments === "function" 
+          ? attachments(state.attachments)
+          : attachments
+      })),
 }))

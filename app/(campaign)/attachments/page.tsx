@@ -2,16 +2,14 @@
 
 import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import { Button } from "@/components/ui/button";
+import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
-interface FileItem {
-  file: File;
-  id: string;
-}
+
 
 const AttachmentsPage = () => {
-  const [files, setFiles] = useState<FileItem[]>([]);
+  const {attachments, setAttachments} = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -19,11 +17,11 @@ const AttachmentsPage = () => {
       file,
       id: `${file.name}-${Date.now()}-${Math.random()}`,
     }));
-    setFiles((prev) => [...prev, ...newFiles]);
+    setAttachments((prev) => [...prev, ...newFiles]);
   };
 
   const removeFile = (id: string) => {
-    setFiles((prev) => prev.filter((file) => file.id !== id));
+    setAttachments((prev) => prev.filter((file) => file.id !== id));
   };
 
   return (
@@ -48,17 +46,17 @@ const AttachmentsPage = () => {
         />
       </div>
 
-      {files.length > 0 ? (
+      {attachments.length > 0 ? (
         <>
           {/* Files List */}
           <div className="border border-border">
             <div className="bg-secondary px-4 md:px-6 py-4 border-b border-border">
               <h3 className="text-sm font-black tracking-wide">
-                UPLOADED FILES ({files.length})
+                UPLOADED FILES ({attachments.length})
               </h3>
             </div>
             <div className="divide-y divide-border">
-              {files.map((item) => (
+              {attachments.map((item) => (
                 <div key={item.id} className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1 min-w-0">
