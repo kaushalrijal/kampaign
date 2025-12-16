@@ -11,11 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { parseFile } from "@/lib/parser/parseFile";
-import { useState } from "react";
+import { useKampaignStore } from "@/lib/store/kampaign-store";
 
 const ImportPage = () => {
-  const [contacts, setContacts] = useState<Array<Record<string, string>>>([]);
-  const [headers, setHeaders] = useState<Array<string>>([]);
+  const {contacts, setContacts, headers, setHeaders} = useKampaignStore();
 
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
