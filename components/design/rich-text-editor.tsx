@@ -89,9 +89,28 @@ export const RichTextEditor = forwardRef<
   // const [htmlOutput, setHtmlOutput] = useState("")
   const { htmlOutput, setHtmlOutput } = useKampaignStore();
 
+  // helper
+  const placeCaretAtEnd = (el: HTMLElement) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    if (!sel) return;
+    sel.removeAllRanges();
+    sel.addRange(range);
+  };
+
+  const hasHydrated = useRef(false);
+
   useEffect(() => {
-    if (editorRef.current && htmlOutput) {
-      editorRef.current.innerHTML = htmlOutput; // restore saved content
+    const el = editorRef.current;
+    if (!el || !htmlOutput) return;
+
+    const needsSync = el.innerHTML !== htmlOutput || !hasHydrated.current;
+    if (needsSync) {
+      el.innerHTML = htmlOutput;
+      placeCaretAtEnd(el);
+      hasHydrated.current = true;
     }
   }, [htmlOutput]);
 
@@ -628,27 +647,7 @@ export const RichTextEditor = forwardRef<
           )}
         </div>
 
-        <div className="mt-6">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-bold tracking-wider uppercase">
-              HTML OUTPUT
-            </label>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(htmlOutput);
-              }}
-              className="px-3 py-1 text-xs font-bold tracking-wider uppercase border-2 border-black hover:bg-black hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1"
-              aria-label="Copy HTML to clipboard"
-            >
-              COPY
-            </button>
-          </div>
-          <pre className="p-4 bg-neutral-100 border-2 border-black font-mono text-sm overflow-x-auto whitespace-pre-wrap break-all max-h-[200px] overflow-y-auto">
-            {htmlOutput || "<p>Start typing to see HTML output...</p>"}
-          </pre>
-        </div>
-
+       
         <Dialog
           open={linkDialogOpen}
           onOpenChange={(open) => !open && handleLinkCancel()}
