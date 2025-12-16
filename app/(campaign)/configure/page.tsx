@@ -3,8 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useKampaignStore } from "@/lib/store/kampaign-store";
 
 const ConfigurePage = () => {
+  const {campaignName, setCampaignName} = useKampaignStore()
+  
   const handleTestConnection = () => {
     return;
   };
@@ -74,6 +77,8 @@ const ConfigurePage = () => {
           <Input
             type="text"
             placeholder="Q1 2025 Product Launch"
+            value={campaignName}
+            onChange={(e) => setCampaignName(e.target.value)}
           />
           <p className="text-xs text-muted-foreground mt-2">For your campaign history records</p>
         </div>
