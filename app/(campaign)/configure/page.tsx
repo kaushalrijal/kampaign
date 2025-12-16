@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 
 const ConfigurePage = () => {
-  const {campaignName, setCampaignName} = useKampaignStore()
+  const {campaignName, setCampaignName, contacts, attachments} = useKampaignStore()
   
   const handleTestConnection = () => {
     return;
@@ -27,7 +27,7 @@ const ConfigurePage = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="border border-border p-6 bg-card">
           <Label>RECIPIENTS</Label>
-          <div className="text-4xl font-black">69</div>
+          <div className="text-4xl font-black">{contacts.length}</div>
           <div className="text-xs text-muted-foreground mt-2">
             emails to be sent
           </div>
@@ -35,7 +35,7 @@ const ConfigurePage = () => {
 
         <div className="border border-border p-6 bg-card">
           <Label>ATTACHMENTS</Label>
-          <div className="text-4xl font-black">3</div>
+          <div className="text-4xl font-black">{attachments.length}</div>
           <div className="text-xs text-muted-foreground mt-2">
             files included
           </div>
@@ -89,14 +89,14 @@ const ConfigurePage = () => {
         <div className="p-8 space-y-4">
           <div>
             <p className="text-sm text-muted-foreground mb-4">
-              You are about to send <span className="font-black">69</span> personalized emails.
+              You are about to send <span className="font-black">{contacts.length}</span> personalized emails.
               This action cannot be undone.
             </p>
           </div>
 
           <div className="flex gap-4 max-w-4xl">
             <Button variant={"destructive"}>
-              SEND NOW (69 emails)
+              SEND NOW ({contacts.length} emails)
             </Button>
             <Button variant={"secondary"}>
               SCHEDULE
