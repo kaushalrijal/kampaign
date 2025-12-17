@@ -1,16 +1,38 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
+import { useState } from "react";
 
 const ConfigurePage = () => {
-  const {campaignName, setCampaignName, contacts, attachments} = useKampaignStore()
-  
-  const handleTestConnection = () => {
-    return;
+  const { campaignName, setCampaignName, contacts, attachments } =
+    useKampaignStore();
+  const [SMTPStatus, setSMTPStatus] = useState<
+    "idle" | "testing" | "success" | "failed"
+  >("idle");
+
+  const handleTestConnection = async () => {
+    try {
+      setSMTPStatus("testing");
+      const res = await fetch("/api/smtp/test");
+      const result = await res.json()
+
+      console.log(result)
+
+      if (!result.success) {
+        setSMTPStatus("failed");
+        return;
+      }
+
+      setSMTPStatus("success");
+    } catch (error) {
+      console.log("Error: ", error);
+      setSMTPStatus("failed");
+    }
   };
+
   return (
     <div className="space-y-8">
       <div>
@@ -63,8 +85,28 @@ const ConfigurePage = () => {
             verify connectivity without sending any emails.
           </p>
 
-          <Button variant={"outline"} onClick={handleTestConnection}>TEST CONNECTION</Button>
-        </div> 
+          <Button
+            onClick={handleTestConnection}
+            disabled={SMTPStatus === "testing"}
+            className={`px-6 py-3 font-semibold text-sm tracking-wide border transition-all ${
+              SMTPStatus === "success"
+                ? "bg-primary text-primary-foreground border-foreground"
+                : SMTPStatus === "testing"
+                ? "bg-muted text-foreground border-border opacity-50 cursor-wait"
+                : SMTPStatus === "failed"
+                ? "bg-destructive text-white border-destructive"
+                : "bg-secondary text-foreground border-border hover:bg-muted"
+            }`}
+          >
+            {SMTPStatus === "testing"
+              ? "TESTING..."
+              : SMTPStatus === "success"
+              ? "CONNECTION OK"
+              : SMTPStatus === "failed"
+              ? "SMTP Not Configured!"
+              : "TEST CONNECTION"}
+          </Button>
+        </div>
       </div>
 
       {/* Campaign Name */}
@@ -80,7 +122,9 @@ const ConfigurePage = () => {
             value={campaignName}
             onChange={(e) => setCampaignName(e.target.value)}
           />
-          <p className="text-xs text-muted-foreground mt-2">For your campaign history records</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            For your campaign history records
+          </p>
         </div>
       </div>
 
@@ -89,8 +133,9 @@ const ConfigurePage = () => {
         <div className="p-8 space-y-4">
           <div>
             <p className="text-sm text-muted-foreground mb-4">
-              You are about to send <span className="font-black">{contacts.length}</span> personalized emails.
-              This action cannot be undone.
+              You are about to send{" "}
+              <span className="font-black">{contacts.length}</span> personalized
+              emails. This action cannot be undone.
             </p>
           </div>
 
@@ -98,9 +143,7 @@ const ConfigurePage = () => {
             <Button variant={"destructive"}>
               SEND NOW ({contacts.length} emails)
             </Button>
-            <Button variant={"secondary"}>
-              SCHEDULE
-            </Button>
+            <Button variant={"secondary"}>SCHEDULE</Button>
           </div>
         </div>
       </div>
