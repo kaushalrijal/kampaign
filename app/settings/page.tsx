@@ -13,9 +13,10 @@ interface SMTPConfig {
   fromName: string;
 }
 
-
 const SettingsPage = () => {
-  const [envStatus, setEnvStatus] = useState<"loaded" | "not-found">("not-found")
+  const [envStatus, setEnvStatus] = useState<"loaded" | "not-found">(
+    "not-found"
+  );
   const [showPassword, togglePassword] = useState<boolean>(false);
   const [smtpConfig, setSmtpConfig] = useState<SMTPConfig>({
     host: "",
@@ -24,31 +25,59 @@ const SettingsPage = () => {
     appPassword: "",
     fromEmail: "",
     fromName: "",
-  })
+  });
+
+  const [SMTPStatus, setSMTPStatus] = useState<
+    "idle" | "testing" | "success" | "failed"
+  >("idle");
+
+  const handleTestConnection = async () => {
+    try {
+      setSMTPStatus("testing");
+      const res = await fetch("/api/smtp/test");
+      const result = await res.json();
+
+      console.log(result);
+
+      if (!result.success) {
+        setSMTPStatus("failed");
+        return;
+      }
+
+      setSMTPStatus("success");
+    } catch (error) {
+      console.log("Error: ", error);
+      setSMTPStatus("failed");
+    }
+  };
 
   const handleSave = () => {
     return;
-  }
+  };
 
-  const handleChange = (field:string, value:string) => {
-    setSmtpConfig((prev) => ({...prev, [field]:value}))
+  const handleChange = (field: string, value: string) => {
+    setSmtpConfig((prev) => ({ ...prev, [field]: value }));
     return;
-  }
-  
+  };
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black tracking-tight mb-2">SMTP CONFIGURATION</h2>
+        <h2 className="text-2xl font-black tracking-tight mb-2">
+          SMTP CONFIGURATION
+        </h2>
         <p className="text-muted-foreground text-sm">
-          Configure your email provider credentials. Data is stored locally only.
+          Configure your email provider credentials. Data is stored locally
+          only.
         </p>
       </div>
 
-    <div className="border border-border">
+      <div className="border border-border">
         <div className="bg-secondary px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black tracking-wide">SMTP CREDENTIALS</h3>
+            <h3 className="text-sm font-black tracking-wide">
+              SMTP CREDENTIALS
+            </h3>
             <div className="text-xs font-mono px-3 py-1 border border-border bg-background">
               {envStatus === "loaded" ? "ENV LOADED" : "FORM MODE"}
             </div>
@@ -59,32 +88,42 @@ const SettingsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Host */}
             <div>
-              <label className="block text-xs font-black tracking-widest mb-2">SMTP HOST</label>
+              <label className="block text-xs font-black tracking-widest mb-2">
+                SMTP HOST
+              </label>
               <Input
                 type="text"
                 value={smtpConfig.host}
                 onChange={(e) => handleChange("host", e.target.value)}
                 placeholder="smtp.gmail.com"
               />
-              <p className="text-xs text-muted-foreground mt-1">e.g., smtp.gmail.com, smtp.office365.com</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                e.g., smtp.gmail.com, smtp.office365.com
+              </p>
             </div>
 
             {/* Port */}
             <div>
-              <label className="block text-xs font-black tracking-widest mb-2">SMTP PORT</label>
+              <label className="block text-xs font-black tracking-widest mb-2">
+                SMTP PORT
+              </label>
               <Input
                 type="text"
                 value={smtpConfig.port}
                 onChange={(e) => handleChange("port", e.target.value)}
                 placeholder="587"
               />
-              <p className="text-xs text-muted-foreground mt-1">Usually 587 (TLS) or 465 (SSL)</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Usually 587 (TLS) or 465 (SSL)
+              </p>
             </div>
           </div>
 
           {/* Username */}
           <div>
-            <label className="block text-xs font-black tracking-widest mb-2">SMTP USERNAME</label>
+            <label className="block text-xs font-black tracking-widest mb-2">
+              SMTP USERNAME
+            </label>
             <Input
               type="text"
               value={smtpConfig.user}
@@ -95,7 +134,9 @@ const SettingsPage = () => {
 
           {/* App Password */}
           <div>
-            <label className="block text-xs font-black tracking-widest mb-2">SMTP APP PASSWORD</label>
+            <label className="block text-xs font-black tracking-widest mb-2">
+              SMTP APP PASSWORD
+            </label>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
@@ -120,7 +161,9 @@ const SettingsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* From Email */}
               <div>
-                <label className="block text-xs font-black tracking-widest mb-2">FROM EMAIL</label>
+                <label className="block text-xs font-black tracking-widest mb-2">
+                  FROM EMAIL
+                </label>
                 <Input
                   type="text"
                   value={smtpConfig.fromEmail}
@@ -131,7 +174,9 @@ const SettingsPage = () => {
 
               {/* From Name */}
               <div>
-                <label className="block text-xs font-black tracking-widest mb-2">FROM NAME</label>
+                <label className="block text-xs font-black tracking-widest mb-2">
+                  FROM NAME
+                </label>
                 <Input
                   type="text"
                   value={smtpConfig.fromName}
@@ -151,8 +196,26 @@ const SettingsPage = () => {
           >
             SAVE CONFIG
           </Button>
-          <Button className="px-6 py-2 border border-border bg-background text-foreground font-semibold text-xs tracking-wide hover:bg-muted transition-colors">
-            TEST CONNECTION
+          <Button
+            onClick={handleTestConnection}
+            disabled={SMTPStatus === "testing"}
+            className={`px-6 py-3 font-semibold text-sm tracking-wide border transition-all ${
+              SMTPStatus === "success"
+                ? "bg-primary text-primary-foreground border-foreground"
+                : SMTPStatus === "testing"
+                ? "bg-muted text-foreground border-border opacity-50 cursor-wait"
+                : SMTPStatus === "failed"
+                ? "bg-destructive text-white border-destructive"
+                : "bg-secondary text-foreground border-border hover:bg-muted"
+            }`}
+          >
+            {SMTPStatus === "testing"
+              ? "TESTING..."
+              : SMTPStatus === "success"
+              ? "CONNECTION OK"
+              : SMTPStatus === "failed"
+              ? "SMTP Not Configured!"
+              : "TEST CONNECTION"}
           </Button>
         </div>
       </div>
@@ -162,13 +225,14 @@ const SettingsPage = () => {
         <ul className="space-y-2 text-xs text-muted-foreground font-mono">
           <li>- All credentials stored locally in browser</li>
           <li>- No data sent to external servers</li>
-          <li>- Requires SMTP_* environment variables to pre-load (optional)</li>
+          <li>
+            - Requires SMTP_* environment variables to pre-load (optional)
+          </li>
           <li>- Can be overridden via this form anytime</li>
         </ul>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default SettingsPage
+export default SettingsPage;
