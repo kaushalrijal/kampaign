@@ -3,15 +3,23 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { useState } from "react";
 
 const ConfigurePage = () => {
-  const { campaignName, setCampaignName, contacts, attachments } =
+  const { campaignName, setCampaignName, contacts, attachments, headers } =
     useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
   >("idle");
+  const [emailColumn, setEmailColumn] = useState<string>("");
 
   const handleTestConnection = async () => {
     try {
@@ -127,6 +135,32 @@ const ConfigurePage = () => {
           </p>
         </div>
       </div>
+
+      {/* Email Header Selection */}
+      {headers.length > 0 && (
+        <div className="border border-border">
+          <div className="bg-secondary px-6 py-4 border-b border-border">
+            <Label>EMAIL HEADER</Label>
+          </div>
+          <div className="p-8">
+            <p className="text-sm text-muted-foreground mb-6">
+              Select the header that contains the recipients' email addresses.
+            </p>
+            <Select value={emailColumn} onValueChange={setEmailColumn}>
+              <SelectTrigger className="w-full sm:w-96">
+                <SelectValue placeholder="Select email column..." />
+              </SelectTrigger>
+              <SelectContent>
+                {headers.map((header) => (
+                  <SelectItem key={header} value={header}>
+                    {header}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
 
       {/* Send Button */}
       <div className="border border-border">
