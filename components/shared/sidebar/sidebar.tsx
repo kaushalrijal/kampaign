@@ -23,7 +23,7 @@ const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        <div className="px-6 py-6 border-b border-border shrink-0">
+        <div className="px-6 py-13 border-b border-border shrink-0">
           <div className="text-xs font-black tracking-widest text-muted-foreground">MENU</div>
         </div>
       </SidebarHeader>
