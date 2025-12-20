@@ -11,15 +11,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
+import { validateContent } from "@/lib/validate";
 import { useState } from "react";
 
 const ConfigurePage = () => {
-  const { campaignName, setCampaignName, contacts, attachments, headers } =
+  const { campaignName, setCampaignName, contacts, attachments, headers, recipientHeader, setRecipientHeader } =
     useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
   >("idle");
-  const [emailColumn, setEmailColumn] = useState<string>("");
 
   const handleTestConnection = async () => {
     try {
@@ -40,6 +40,13 @@ const ConfigurePage = () => {
       setSMTPStatus("failed");
     }
   };
+
+  const sendEmail = () => {
+    const res = validateContent();
+    console.log(res)
+    
+    return;
+  }
 
   return (
     <div className="space-y-8">
@@ -146,7 +153,7 @@ const ConfigurePage = () => {
             <p className="text-sm text-muted-foreground mb-6">
               Select the header that contains the recipients' email addresses.
             </p>
-            <Select value={emailColumn} onValueChange={setEmailColumn}>
+            <Select value={recipientHeader} onValueChange={setRecipientHeader}>
               <SelectTrigger className="w-full sm:w-96">
                 <SelectValue placeholder="Select email column..." />
               </SelectTrigger>
@@ -174,7 +181,7 @@ const ConfigurePage = () => {
           </div>
 
           <div className="flex gap-4 max-w-4xl">
-            <Button variant={"destructive"}>
+            <Button variant={"destructive"} onClick={sendEmail}>
               SEND NOW ({contacts.length} emails)
             </Button>
             <Button variant={"secondary"}>SCHEDULE</Button>
