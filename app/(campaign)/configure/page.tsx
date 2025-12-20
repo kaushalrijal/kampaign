@@ -42,8 +42,8 @@ const ConfigurePage = () => {
   };
 
   const sendEmail = () => {
-    const res = validateContent();
-    console.log(res)
+    const validation = validateContent();
+    console.log(validation)
     
     return;
   }
