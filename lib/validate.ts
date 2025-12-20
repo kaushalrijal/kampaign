@@ -10,11 +10,11 @@ export const validateContent = (): ValidationResult => {
 
   const warnings: string[] = [];
   const errors: string[] = [];
-  if (!campaignName.trim()) warnings.push("Campaign name is required.");
+  if (!campaignName.trim()) warnings.push("No campaign name.");
   if (!subject.trim()) errors.push("Subject is required.");
-  if (!htmlOutput.trim()) warnings.push("Email body is required.");
+  if (!htmlOutput.trim()) warnings.push("No email body.");
   if (!contacts.length) errors.push("At least one contact is required.");
-  if (!recipientHeader.length) errors.push("Select the column with headers columns.");
+  if (!recipientHeader.length) errors.push("Header with recipient email must be selected!.");
   if (!attachments.every((a) => a.file)) warnings.push("No files attached.");
 
   return errors.length ? { ok: false, errors, warnings } : { ok: true, warnings };

@@ -13,6 +13,7 @@ import {
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { validateContent } from "@/lib/validate";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const ConfigurePage = () => {
   const { campaignName, setCampaignName, contacts, attachments, headers, recipientHeader, setRecipientHeader } =
@@ -44,8 +45,14 @@ const ConfigurePage = () => {
   const sendEmail = () => {
     const validation = validateContent();
     console.log(validation)
-    
-    return;
+    if(!validation.ok){
+      validation.warnings.map((warning) => toast.warning(warning))
+      validation.errors.map((error) => toast.error(error))
+      return;
+    } else {  
+      return;
+    }
+  
   }
 
   return (
