@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { ContactRow } from "../types";
 
 interface FileItem {
   file: File;
@@ -8,17 +9,19 @@ interface FileItem {
 interface KampaignState {
     campaignName: string;
     attachments: FileItem[];
-    contacts: Record<string, string>[];
+    contacts: ContactRow[];
     headers: Array<string>;
     subject: string;
     htmlOutput: string;
+    recipientHeader: string;
 
-    setContacts: (contacts: Record<string, string>[])=>void;
+    setContacts: (contacts: ContactRow[])=>void;
     setHeaders: (headers: string[])=>void;
     setCampaignName: (name:string) => void;
     setSubject: (subject: string) => void;
     setHtmlOutput: (body: string) => void;
     setAttachments: (attachments: FileItem[] | ((prev: FileItem[]) => FileItem[])) => void;
+    setRecipientHeader: (header: string) => void;
 }
 
 export const useKampaignStore = create<KampaignState>((set) => ({
@@ -28,8 +31,9 @@ export const useKampaignStore = create<KampaignState>((set) => ({
     subject: "",
     htmlOutput: "",
     attachments: [],
+    recipientHeader: "",
 
-    setContacts: (contacts: Record<string, string>[]) => set({contacts}),
+    setContacts: (contacts: ContactRow[]) => set({contacts}),
     setHeaders: (headers: string[])=>set({headers}),
     setCampaignName: (name:string) => set({campaignName: name}),
     setSubject: (subject: string) => set({subject}),
@@ -40,4 +44,5 @@ export const useKampaignStore = create<KampaignState>((set) => ({
           ? attachments(state.attachments)
           : attachments
       })),
+    setRecipientHeader: (header: string) => set({recipientHeader: header}),
 }))
