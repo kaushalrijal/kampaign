@@ -24,6 +24,8 @@ const ConfigurePage = () => {
     attachments,
     headers,
     recipientHeader,
+    subject, 
+    htmlOutput,
     setRecipientHeader,
   } = useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
@@ -59,7 +61,7 @@ const ConfigurePage = () => {
     } else {
       try {
         const response = await sendCampaign({
-          title: "labalaba",
+          contacts, attachments, headers, subject, htmlOutput, recipientHeader
         });
 
         console.log(response);
