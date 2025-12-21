@@ -10,14 +10,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { sendCampaign, testSMTPConnection } from "@/lib/api";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { validateContent } from "@/lib/validate";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const ConfigurePage = () => {
-  const { campaignName, setCampaignName, contacts, attachments, headers, recipientHeader, setRecipientHeader } =
-    useKampaignStore();
+  const {
+    campaignName,
+    setCampaignName,
+    contacts,
+    attachments,
+    headers,
+    recipientHeader,
+    setRecipientHeader,
+  } = useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
   >("idle");
@@ -25,10 +33,9 @@ const ConfigurePage = () => {
   const handleTestConnection = async () => {
     try {
       setSMTPStatus("testing");
-      const res = await fetch("/api/smtp/test");
-      const result = await res.json()
+      const result = await testSMTPConnection();
 
-      console.log(result)
+      console.log(result);
 
       if (!result.success) {
         setSMTPStatus("failed");
@@ -42,18 +49,27 @@ const ConfigurePage = () => {
     }
   };
 
-  const sendEmail = () => {
+  const sendEmail = async () => {
     const validation = validateContent();
-    console.log(validation)
-    if(!validation.ok){
-      validation.warnings.map((warning) => toast.warning(warning))
-      validation.errors.map((error) => toast.error(error))
+    console.log(validation);
+    if (!validation.ok) {
+      validation.warnings.map((warning) => toast.warning(warning));
+      validation.errors.map((error) => toast.error(error));
       return;
-    } else {  
-      return;
+    } else {
+      try {
+        const response = await sendCampaign({
+          title: "labalaba",
+        });
+
+        console.log(response);
+        return;
+      } catch (error) {
+        console.log("Error: ", error);
+        toast.error("Failed to send campaign");
+      }
     }
-  
-  }
+  };
 
   return (
     <div className="space-y-8">

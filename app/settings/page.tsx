@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { testSMTPConnection } from "@/lib/api";
 import { useState } from "react";
 
 interface SMTPConfig {
@@ -34,8 +35,7 @@ const SettingsPage = () => {
   const handleTestConnection = async () => {
     try {
       setSMTPStatus("testing");
-      const res = await fetch("/api/smtp/test");
-      const result = await res.json();
+      const result = await testSMTPConnection();
 
       console.log(result);
 
