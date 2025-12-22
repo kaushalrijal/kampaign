@@ -15,7 +15,15 @@ export async function POST(req: Request) {
     }
 
     // create transporter
-    
+    const transporter = await nodemailer.createTransport({
+        host: env.HOST,
+        port: env.PORT,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: env.USER,
+          pass: env.APP_PASSWORD,
+        },
+      });
     
     
     for(const contact of contacts){
@@ -29,7 +37,15 @@ export async function POST(req: Request) {
         console.log('FILES: ', attachments)
         console.log("------")
 
-        const sent = await 
+        const sent = await transporter.sendMail({
+            from: env.USER, 
+            to: contact[recipientHeader],
+            subject: eachSubject,
+            html: eachBody
+        })
+
+
+        console.log("Message Sent: ", sent.messageId);
     }
     return NextResponse.json({success: "success"})
 }
