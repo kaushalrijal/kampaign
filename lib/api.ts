@@ -14,8 +14,25 @@ export interface SendCampaignResponse {
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    let message = `Request failed with status ${response.status}`;
+
+    try {
+      const data = await response.json();
+      if (data?.message) {
+        message = data.message;
+      }
+    } catch {
+      // response was not JSON, ignore
+    }
+
+    throw new Error(message);
   }
+
+  // Handle empty responses safely
+  if (response.status === 204) {
+    return {} as T;
+  }
+
   return response.json() as Promise<T>;
 }
 
@@ -27,7 +44,7 @@ export async function testSMTPConnection(): Promise<SMTPTestResponse> {
 export async function sendCampaign(
   formData: FormData
 ): Promise<SendCampaignResponse> {
-  const res = await fetch("/api/send", {
+  const res = await fetch("/api/campaign/send", {
     method: "POST",
     body: formData
   });
