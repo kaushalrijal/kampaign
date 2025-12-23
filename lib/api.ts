@@ -5,10 +5,6 @@ export interface SMTPTestResponse {
   message?: string;
 }
 
-export interface SendCampaignPayload {
-  // Extend this payload with the real campaign fields when available.
-  [key: string]: unknown;
-}
 
 export interface SendCampaignResponse {
   success?: boolean;
@@ -29,14 +25,11 @@ export async function testSMTPConnection(): Promise<SMTPTestResponse> {
 }
 
 export async function sendCampaign(
-  payload: SendCampaignPayload
+  formData: FormData
 ): Promise<SendCampaignResponse> {
   const res = await fetch("/api/send", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+    body: formData
   });
 
   return handleResponse<SendCampaignResponse>(res);

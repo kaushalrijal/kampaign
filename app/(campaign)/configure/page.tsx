@@ -24,7 +24,7 @@ const ConfigurePage = () => {
     attachments,
     headers,
     recipientHeader,
-    subject, 
+    subject,
     htmlOutput,
     setRecipientHeader,
   } = useKampaignStore();
@@ -58,18 +58,31 @@ const ConfigurePage = () => {
       validation.warnings.map((warning) => toast.warning(warning));
       validation.errors.map((error) => toast.error(error));
       return;
-    } else {
-      try {
-        const response = await sendCampaign({
-          contacts, attachments, headers, subject, htmlOutput, recipientHeader
-        });
+    }
+    try {
+      const formData = new FormData();
+      formData.append(
+        "payload",
+        JSON.stringify({
+          contacts,
+          attachments,
+          headers,
+          subject,
+          htmlOutput,
+          recipientHeader,
+        })
+      );
 
-        console.log(response);
-        return;
-      } catch (error) {
-        console.log("Error: ", error);
-        toast.error("Failed to send campaign");
-      }
+      attachments.forEach((att) => {
+        formData.append("attachments", att.file);
+      });
+      const response = await sendCampaign(formData);
+
+      console.log(response);
+      return;
+    } catch (error) {
+      console.log("Error: ", error);
+      toast.error("Failed to send campaign");
     }
   };
 

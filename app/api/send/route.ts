@@ -47,5 +47,7 @@ export async function POST(req: Request) {
 
         console.log("Message Sent: ", sent.messageId);
     }
+
+    console.log(attachments)
     return NextResponse.json({success: "success"})
 }

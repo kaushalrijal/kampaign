@@ -4,9 +4,6 @@ import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import { Button } from "@/components/ui/button";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
-
-
 
 const AttachmentsPage = () => {
   const {attachments, setAttachments} = useKampaignStore();
@@ -17,6 +14,7 @@ const AttachmentsPage = () => {
       file,
       id: `${file.name}-${Date.now()}-${Math.random()}`,
     }));
+    console.log(newFiles)
     setAttachments((prev) => [...prev, ...newFiles]);
   };
 
