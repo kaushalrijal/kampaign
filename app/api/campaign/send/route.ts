@@ -2,6 +2,8 @@ import { getEnvSMTPConfig } from "@/lib/server/smtp-config";
 import renderTemplate from "@/lib/template/render";
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import path from "path";
+import fs from "fs/promises"
 
 export async function POST(req: Request) {
   // parse form data
@@ -28,16 +30,35 @@ export async function POST(req: Request) {
     }, {status: 400});
   }
 
-//   // create transporter
-//   const transporter = await nodemailer.createTransport({
-//     host: env.HOST,
-//     port: env.PORT,
-//     secure: false, // true for 465, false for other ports
-//     auth: {
-//       user: env.USER,
-//       pass: env.APP_PASSWORD,
-//     },
-//   });
+  //  create temporary path
+  const tempPath = path.join(process.cwd(), "tmp", crypto.randomUUID())
+  await fs.mkdir(tempPath, {recursive: true})
+
+  const mailAttachments = [];
+
+  for (const file of files){
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const filePath = path.join(tempPath, `${crypto.randomUUID()}-${file.name}`)
+
+    await fs.writeFile(filePath, buffer);
+
+    mailAttachments.push({
+      filename: file.name,
+      path: filePath
+    })
+  }
+
+  console.log(mailAttachments)
+  // create transporter
+  const transporter = await nodemailer.createTransport({
+    host: env.HOST,
+    port: env.PORT,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: env.USER,
+      pass: env.APP_PASSWORD,
+    },
+  });
 
   for (const contact of contacts) {
     const eachBody = renderTemplate(htmlOutput, contact);
@@ -50,16 +71,17 @@ export async function POST(req: Request) {
     console.log("FILES: ", files);
     console.log("------");
 
-    // const sent = await transporter.sendMail({
-    //   from: env.USER,
-    //   to: contact[recipientHeader],
-    //   subject: eachSubject,
-    //   html: eachBody,
-    // });
+    const sent = await transporter.sendMail({
+      from: env.USER,
+      to: contact[recipientHeader],
+      subject: eachSubject,
+      html: eachBody,
+      attachments: mailAttachments,
+    });
 
-    // console.log("Message Sent: ", sent.messageId);
+    console.log("Message Sent: ", sent.messageId);
   }
 
-  console.log(files);
+  await fs.rm(tempPath, { recursive: true, force: true });
   return NextResponse.json({ success: "success" });
 }
