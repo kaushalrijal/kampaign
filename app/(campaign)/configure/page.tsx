@@ -42,12 +42,18 @@ const ConfigurePage = () => {
   >("idle");
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [randomContactIndex, setRandomContactIndex] = useState(0);
 
   // Get a random contact for preview
   const randomContact = useMemo(() => {
     if (contacts.length === 0) return null;
-    return contacts[Math.floor(Math.random() * contacts.length)];
-  }, []);
+    return contacts[randomContactIndex];
+  }, [randomContactIndex, contacts]);
+
+  const handleRandomizeContact = () => {
+    const newIndex = Math.floor(Math.random() * contacts.length);
+    setRandomContactIndex(newIndex);
+  };
 
   // Memoize rendered values to avoid unnecessary recalculations
   const renderedPreview = useMemo(() => {
@@ -302,9 +308,20 @@ const ConfigurePage = () => {
             {/* Sample Contact Info */}
             {randomContact && (
               <div className="border-t-2 border-black pt-4">
-                <p className="text-xs text-neutral-600 uppercase tracking-widest font-bold mb-2">
-                  Sample Recipient
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-neutral-600 uppercase tracking-widest font-bold">
+                    Sample Recipient
+                  </p>
+                  <Button
+                    type="button"
+                    onClick={handleRandomizeContact}
+                    disabled={isSending}
+                    variant="outline"
+                    className="h-6 px-2 text-xs border border-black rounded-none font-bold uppercase tracking-wide hover:bg-neutral-100 bg-transparent"
+                  >
+                    Randomize
+                  </Button>
+                </div>
                 <div className="bg-neutral-50 border border-black rounded-none p-3 text-xs font-mono space-y-1">
                   {Object.entries(randomContact).map(([key, value]) => (
                     <div key={key} className="flex gap-2">
@@ -325,7 +342,7 @@ const ConfigurePage = () => {
               disabled={isSending}
               className="border-2 border-black rounded-none font-bold uppercase tracking-wide hover:bg-neutral-100 bg-transparent"
             >
-              Review Again
+              Go Back
             </Button>
             <Button
               type="button"
