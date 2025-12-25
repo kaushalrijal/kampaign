@@ -159,10 +159,10 @@ export const RichTextEditor = forwardRef<
       editorRef.current?.focus()
       runExecCommand(command, value)
       updateOutput()
-      // Use requestAnimationFrame to ensure DOM has fully updated
-      requestAnimationFrame(() => {
+      // Use setTimeout to ensure browser has processed execCommand
+      setTimeout(() => {
         checkActiveState()
-      })
+      }, 10)
     },
     [updateOutput, checkActiveState]
   );
@@ -174,10 +174,10 @@ export const RichTextEditor = forwardRef<
         toggleFormatBlock(editorRef.current, tag)
       }
       updateOutput()
-      // Use requestAnimationFrame to ensure DOM has fully updated
-      requestAnimationFrame(() => {
+      // Use setTimeout to ensure browser has processed formatBlock
+      setTimeout(() => {
         checkActiveState()
-      })
+      }, 10)
     },
     [updateOutput, checkActiveState]
   );

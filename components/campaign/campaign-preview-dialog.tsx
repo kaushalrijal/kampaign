@@ -34,7 +34,7 @@ export function CampaignPreviewDialog({
 }: CampaignPreviewDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="border-4 border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="border-4 border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-xl font-black uppercase tracking-tight">
             Preview Campaign
@@ -44,7 +44,7 @@ export function CampaignPreviewDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 pr-2 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-neutral-100 [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-black">
           {/* Subject Preview */}
           <div className="space-y-2">
             <Label className="text-xs font-bold uppercase tracking-widest">
@@ -60,9 +60,9 @@ export function CampaignPreviewDialog({
             <Label className="text-xs font-bold uppercase tracking-widest">
               Body Preview
             </Label>
-            <div className="border-2 border-black rounded-none bg-white p-4 min-h-64 max-h-96 overflow-y-auto">
+            <div className="border-2 border-black rounded-none bg-white p-4 min-h-64 max-h-96 overflow-y-auto overflow-x-hidden w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-neutral-100 [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-black">
               <div
-                className="prose prose-sm max-w-none"
+                className="prose prose-sm max-w-none break-words"
                 dangerouslySetInnerHTML={{ __html: renderedPreview.html }}
               />
             </div>
@@ -120,3 +120,4 @@ export function CampaignPreviewDialog({
     </Dialog>
   );
 }
+
