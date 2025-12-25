@@ -53,6 +53,7 @@ import {
   getCurrentWord as utilsGetCurrentWord,
   insertHeaderAtCursor as utilsInsertHeaderAtCursor,
   replaceCurrentWordWithHeader as utilsReplaceCurrentWordWithHeader,
+  injectInlineStyles,
 } from "@/lib/rich-text-utils";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 
@@ -141,35 +142,42 @@ export const RichTextEditor = forwardRef<
 
   const checkActiveState = useCallback(() => {
     if (!editorRef.current) return;
-    const state = computeActiveState(editorRef.current);
-    setActiveState(state);
+    const state = computeActiveState(editorRef.current)
+    setActiveState(state)
   }, []);
 
   const updateOutput = useCallback(() => {
     if (editorRef.current) {
       const html = editorRef.current.innerHTML;
-      setHtmlOutput(html);
+      const styledHtml = injectInlineStyles(html)
+      setHtmlOutput(styledHtml)
     }
   }, []);
 
   const execCommand = useCallback(
     (command: string, value?: string) => {
-      runExecCommand(command, value);
-      editorRef.current?.focus();
-      updateOutput();
-      checkActiveState();
+      editorRef.current?.focus()
+      runExecCommand(command, value)
+      updateOutput()
+      // Use requestAnimationFrame to ensure DOM has fully updated
+      requestAnimationFrame(() => {
+        checkActiveState()
+      })
     },
     [updateOutput, checkActiveState]
   );
 
   const formatBlock = useCallback(
     (tag: string) => {
+      editorRef.current?.focus()
       if (editorRef.current) {
-        toggleFormatBlock(editorRef.current, tag);
+        toggleFormatBlock(editorRef.current, tag)
       }
-      editorRef.current?.focus();
-      updateOutput();
-      checkActiveState();
+      updateOutput()
+      // Use requestAnimationFrame to ensure DOM has fully updated
+      requestAnimationFrame(() => {
+        checkActiveState()
+      })
     },
     [updateOutput, checkActiveState]
   );
@@ -411,8 +419,10 @@ export const RichTextEditor = forwardRef<
           onClick={onClick}
           aria-label={label}
           aria-pressed={isActive}
-          className={`p-2 transition-colors border border-transparent hover:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 ${
-            isActive ? "bg-black text-white" : "hover:bg-black hover:text-white"
+          className={`p-2 transition-colors border-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 ${
+            isActive
+              ? "bg-black text-white border-black"
+              : "border-transparent hover:border-black"
           }`}
         >
           {children}

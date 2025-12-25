@@ -67,29 +67,71 @@ export function computeActiveState(editorEl: HTMLElement): ActiveState {
 
 export function toggleFormatBlock(editorEl: HTMLElement, tag: string) {
   const selection = window.getSelection()
-  if (selection && selection.rangeCount > 0) {
-    const range = selection.getRangeAt(0)
-    let node: Node | null = range.startContainer
-    let isCurrentlyInTag = false
+  if (!selection || selection.rangeCount === 0) {
+    runExecCommand("formatBlock", `<${tag}>`)
+    return
+  }
 
-    while (node && node !== editorEl) {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        const tagName = (node as Element).tagName.toLowerCase()
-        if (tagName === tag) {
-          isCurrentlyInTag = true
-          break
-        }
+  const range = selection.getRangeAt(0)
+  let node: Node | null = range.startContainer
+  let isCurrentlyInTag = false
+  let tagElement: Element | null = null
+
+  // Find if we're inside the target tag
+  while (node && node !== editorEl) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tagName = (node as Element).tagName.toLowerCase()
+      if (tagName === tag) {
+        isCurrentlyInTag = true
+        tagElement = node as Element
+        break
       }
-      node = node.parentNode
     }
+    node = node.parentNode
+  }
 
-    if (isCurrentlyInTag) {
+  if (isCurrentlyInTag && tagElement) {
+    // Special handling for pre tags to prevent nesting
+    if (tag === "pre") {
+      // Get the content and replace the pre tag with a p tag
+      const content = tagElement.innerHTML
+      const p = document.createElement("p")
+      p.innerHTML = content
+      tagElement.parentNode?.replaceChild(p, tagElement)
+      
+      // Restore selection
+      const newRange = document.createRange()
+      newRange.selectNodeContents(p)
+      newRange.collapse(false)
+      selection.removeAllRanges()
+      selection.addRange(newRange)
+    } else {
       runExecCommand("formatBlock", "<p>")
+    }
+  } else {
+    // Not in the tag, so apply it
+    // For pre tags, check if we're already in ANY pre tag to prevent nesting
+    if (tag === "pre") {
+      let checkNode: Node | null = range.startContainer
+      let alreadyInPre = false
+      
+      while (checkNode && checkNode !== editorEl) {
+        if (checkNode.nodeType === Node.ELEMENT_NODE) {
+          const tagName = (checkNode as Element).tagName.toLowerCase()
+          if (tagName === "pre") {
+            alreadyInPre = true
+            break
+          }
+        }
+        checkNode = checkNode.parentNode
+      }
+      
+      if (!alreadyInPre) {
+        runExecCommand("formatBlock", `<${tag}>`)
+      }
     } else {
       runExecCommand("formatBlock", `<${tag}>`)
     }
-  } else {
-    runExecCommand("formatBlock", `<${tag}>`)
   }
 }
 
@@ -214,4 +256,54 @@ export function replaceCurrentWordWithHeader(header: string) {
       selection.addRange(newRange)
     }
   }
+}
+
+export function injectInlineStyles(html: string): string {
+  if (typeof window === "undefined") return html
+
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, "text/html")
+
+  // Add inline styles for h1
+  doc.querySelectorAll("h1").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "font-size: 2em; font-weight: bold; margin: 1em 0; line-height: 1.2;"
+  })
+
+  // Add inline styles for h2
+  doc.querySelectorAll("h2").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "font-size: 1.5em; font-weight: bold; margin: 0.83em 0; line-height: 1.2;"
+  })
+
+  // Add inline styles for h3
+  doc.querySelectorAll("h3").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "font-size: 1.17em; font-weight: bold; margin: 0.67em 0; line-height: 1.2;"
+  })
+
+  // Add inline styles for pre (code blocks)
+  doc.querySelectorAll("pre").forEach((el) => {
+    ;(el as HTMLElement).style.cssText =
+      "background-color: #f5f5f5; padding: 12px; font-family: monospace; font-size: 0.875em; border: 2px solid #000; margin: 0.5em 0; overflow-x: auto; white-space: pre-wrap;"
+  })
+
+  // Add inline styles for ul
+  doc.querySelectorAll("ul").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "list-style-type: disc; padding-left: 1.5em; margin: 0.5em 0;"
+  })
+
+  // Add inline styles for ol
+  doc.querySelectorAll("ol").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "list-style-type: decimal; padding-left: 1.5em; margin: 0.5em 0;"
+  })
+
+  // Add inline styles for li
+  doc.querySelectorAll("li").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "margin: 0.25em 0;"
+  })
+
+  // Add inline styles for links
+  doc.querySelectorAll("a").forEach((el) => {
+    ;(el as HTMLElement).style.cssText = "color: #000; text-decoration: underline; font-weight: 500;"
+  })
+
+  return doc.body.innerHTML
 }
