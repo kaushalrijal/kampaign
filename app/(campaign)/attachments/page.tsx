@@ -3,13 +3,20 @@
 import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
+interface Rule {
+  id: string;
+  pattern: string;
+}
+
 const AttachmentsPage = () => {
   const [customEnabled, setCustomEnabled] = useState(false)
   const [broadcastSelected, setBroadcastSelected] = useState<Set<string>>(new Set())
+  const [rules, setRules] = useState<Rule[]>([])
   
   const {attachments, setAttachments} = useKampaignStore();
 
@@ -40,6 +47,10 @@ const AttachmentsPage = () => {
     setAttachments((prev) => prev.filter((file) => file.id !== id));
   };
 
+  const addRule = () => {}
+  const updateRule = () => {}
+  const deleteRule = () => {}
+
   return (
     <div className="space-y-8">
       <div>
@@ -64,7 +75,7 @@ const AttachmentsPage = () => {
 
       {attachments.length > 0 ? (
         <>
-        <div className="border border-border p-4 md:p-6 space-y-4">
+        <div className="border border-border p-4 md:p-6 space-y-2">
             <div className="flex items-center gap-3">
               <Checkbox
                 id="customEnabled"
@@ -127,6 +138,51 @@ const AttachmentsPage = () => {
               ))}
             </div>
           </div>
+            {customEnabled && (
+            <div className="border border-border space-y-4">
+              <div className="bg-secondary px-4 md:px-6 py-4 border-b border-border flex items-center justify-between">
+                <h3 className="text-sm font-black tracking-wide">PERSONALIZATION RULES ({rules.length})</h3>
+                <Button
+                  onClick={addRule}
+                  className="px-3 py-1 text-xs font-semibold border border-border transition-colors"
+                >
+                  ADD RULE
+                </Button>
+              </div>
+
+              <div className="px-4 md:px-6 pb-4 space-y-4">
+                {rules.length === 0 ? (
+                  <p className="text-xs text-muted-foreground py-4">
+                    No rules yet. Click "ADD RULE" to create a pattern for personalized files.
+                  </p>
+                ) : (
+                  rules.map((rule, idx) => (
+                    <div key={rule.id} className="p-4 border border-dashed border-border space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-muted-foreground">RULE {idx + 1}</span>
+                        <button
+                          onClick={() => removeRule(rule.id)}
+                          className="text-xs font-semibold text-destructive hover:underline"
+                        >
+                          REMOVE
+                        </button>
+                      </div>
+                      <Input
+                        type="text"
+                        placeholder="e.g., {name}_invitation.pdf or {id}_report.pdf"
+                        value={rule.pattern}
+                        onChange={(e) => updateRule(rule.id, e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Use CSV column names in curly braces. Example: if a recipient has name="alice", the system looks
+                        for "alice_invitation.pdf"
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <div className="text-center text-muted-foreground">
