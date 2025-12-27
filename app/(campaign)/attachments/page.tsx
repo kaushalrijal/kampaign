@@ -2,10 +2,14 @@
 
 import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
 const AttachmentsPage = () => {
+  const [customEnabled, setCustomEnabled] = useState(false)
+  
   const {attachments, setAttachments} = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +50,23 @@ const AttachmentsPage = () => {
 
       {attachments.length > 0 ? (
         <>
+        <div className="border border-border p-4 md:p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                id="customEnabled"
+                checked={customEnabled}
+                onCheckedChange={(checked) => setCustomEnabled(checked as boolean)}
+              />
+              <label htmlFor="customEnabled" className="text-sm font-semibold tracking-wide cursor-pointer flex-1">
+                ENABLE CUSTOM ATTACHMENT RULES
+              </label>
+            </div>
+            <p className="text-xs text-muted-foreground ml-7">
+              {customEnabled
+                ? "Select which files go to all recipients, then create rules for personalized files"
+                : "All files will be sent to every recipient"}
+            </p>
+          </div>
           {/* Files List */}
           <div className="border border-border">
             <div className="bg-secondary px-4 md:px-6 py-4 border-b border-border">
