@@ -62,7 +62,7 @@ export function CampaignPreviewDialog({
             </Label>
             <div className="border-2 border-black rounded-none bg-white p-4 min-h-64 max-h-96 overflow-y-auto overflow-x-hidden w-full [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-neutral-100 [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-black">
               <div
-                className="prose prose-sm max-w-none break-words"
+                className="prose prose-sm max-w-none wrap-break-words"
                 dangerouslySetInnerHTML={{ __html: renderedPreview.html }}
               />
             </div>
