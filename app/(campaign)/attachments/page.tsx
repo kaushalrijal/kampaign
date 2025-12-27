@@ -9,6 +9,7 @@ import { useState } from "react";
 
 const AttachmentsPage = () => {
   const [customEnabled, setCustomEnabled] = useState(false)
+  const [broadcastSelected, setBroadcastSelected] = useState<Set<string>>(new Set())
   
   const {attachments, setAttachments} = useKampaignStore();
 
@@ -21,6 +22,19 @@ const AttachmentsPage = () => {
     console.log(newFiles)
     setAttachments((prev) => [...prev, ...newFiles]);
   };
+
+  
+  const toggleBroadcast = (id: string) => {
+    setBroadcastSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
 
   const removeFile = (id: string) => {
     setAttachments((prev) => prev.filter((file) => file.id !== id));
@@ -88,6 +102,18 @@ const AttachmentsPage = () => {
                     </div>
 
                     <div className="flex gap-2 flex-wrap">
+                      {customEnabled && (
+                        <Button
+                          onClick={() => toggleBroadcast(item.id)}
+                          className={`px-3 py-2 text-xs font-semibold border transition-colors whitespace-nowrap ${
+                            broadcastSelected.has(item.id)
+                              ? "bg-primary text-primary-foreground border-foreground"
+                              : "border-border"
+                          }`}
+                        >
+                          {broadcastSelected.has(item.id) ? "BROADCAST" : "PERSONALIZE"}
+                        </Button>
+                      )}
                       <Button
                         onClick={() => removeFile(item.id)}
                         className="px-2 py-2 text-xs font-semibold border border-border hover:bg-destructive hover:text-destructive-foreground transition-colors"
