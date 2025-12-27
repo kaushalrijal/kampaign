@@ -14,11 +14,13 @@ interface Rule {
 }
 
 const AttachmentsPage = () => {
-  const [customEnabled, setCustomEnabled] = useState(false)
-  const [broadcastSelected, setBroadcastSelected] = useState<Set<string>>(new Set())
-  const [rules, setRules] = useState<Rule[]>([])
-  
-  const {attachments, setAttachments} = useKampaignStore();
+  const [customEnabled, setCustomEnabled] = useState(false);
+  const [broadcastSelected, setBroadcastSelected] = useState<Set<string>>(
+    new Set()
+  );
+  const [rules, setRules] = useState<Rule[]>([]);
+
+  const { attachments, setAttachments } = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -26,30 +28,37 @@ const AttachmentsPage = () => {
       file,
       id: `${file.name}-${Date.now()}-${Math.random()}`,
     }));
-    console.log(newFiles)
+    console.log(newFiles);
     setAttachments((prev) => [...prev, ...newFiles]);
   };
 
-  
   const toggleBroadcast = (id: string) => {
     setBroadcastSelected((prev) => {
-      const next = new Set(prev)
+      const next = new Set(prev);
       if (next.has(id)) {
-        next.delete(id)
+        next.delete(id);
       } else {
-        next.add(id)
+        next.add(id);
       }
-      return next
-    })
-  }
+      return next;
+    });
+  };
 
   const removeFile = (id: string) => {
     setAttachments((prev) => prev.filter((file) => file.id !== id));
   };
 
-  const addRule = () => {}
-  const updateRule = () => {}
-  const deleteRule = () => {}
+  const addRule = () => {
+    setRules((prev) => [...prev, { id: `rule-${Date.now()}`, pattern: "" }]);
+  };
+
+  const updateRule = (id: string, pattern: string) => {
+    setRules((prev) => prev.map((r) => (r.id === id ? { ...r, pattern } : r)));
+  };
+
+  const removeRule = (id: string) => {
+    setRules((prev) => prev.filter((r) => r.id !== id));
+  };
 
   return (
     <div className="space-y-8">
@@ -75,14 +84,19 @@ const AttachmentsPage = () => {
 
       {attachments.length > 0 ? (
         <>
-        <div className="border border-border p-4 md:p-6 space-y-2">
+          <div className="border border-border p-4 md:p-6 space-y-2">
             <div className="flex items-center gap-3">
               <Checkbox
                 id="customEnabled"
                 checked={customEnabled}
-                onCheckedChange={(checked) => setCustomEnabled(checked as boolean)}
+                onCheckedChange={(checked) =>
+                  setCustomEnabled(checked as boolean)
+                }
               />
-              <label htmlFor="customEnabled" className="text-sm font-semibold tracking-wide cursor-pointer flex-1">
+              <label
+                htmlFor="customEnabled"
+                className="text-sm font-semibold tracking-wide cursor-pointer flex-1"
+              >
                 ENABLE CUSTOM ATTACHMENT RULES
               </label>
             </div>
@@ -122,7 +136,9 @@ const AttachmentsPage = () => {
                               : "border-border"
                           }`}
                         >
-                          {broadcastSelected.has(item.id) ? "BROADCAST" : "PERSONALIZE"}
+                          {broadcastSelected.has(item.id)
+                            ? "BROADCAST"
+                            : "PERSONALIZE"}
                         </Button>
                       )}
                       <Button
@@ -138,10 +154,12 @@ const AttachmentsPage = () => {
               ))}
             </div>
           </div>
-            {customEnabled && (
+          {customEnabled && (
             <div className="border border-border space-y-4">
               <div className="bg-secondary px-4 md:px-6 py-4 border-b border-border flex items-center justify-between">
-                <h3 className="text-sm font-black tracking-wide">PERSONALIZATION RULES ({rules.length})</h3>
+                <h3 className="text-sm font-black tracking-wide">
+                  PERSONALIZATION RULES ({rules.length})
+                </h3>
                 <Button
                   onClick={addRule}
                   className="px-3 py-1 text-xs font-semibold border border-border transition-colors"
@@ -153,13 +171,19 @@ const AttachmentsPage = () => {
               <div className="px-4 md:px-6 pb-4 space-y-4">
                 {rules.length === 0 ? (
                   <p className="text-xs text-muted-foreground py-4">
-                    No rules yet. Click "ADD RULE" to create a pattern for personalized files.
+                    No rules yet. Click "ADD RULE" to create a pattern for
+                    personalized files.
                   </p>
                 ) : (
                   rules.map((rule, idx) => (
-                    <div key={rule.id} className="p-4 border border-dashed border-border space-y-3">
+                    <div
+                      key={rule.id}
+                      className="p-4 border border-dashed border-border space-y-3"
+                    >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono text-muted-foreground">RULE {idx + 1}</span>
+                        <span className="text-xs font-mono text-muted-foreground">
+                          RULE {idx + 1}
+                        </span>
                         <button
                           onClick={() => removeRule(rule.id)}
                           className="text-xs font-semibold text-destructive hover:underline"
@@ -174,8 +198,9 @@ const AttachmentsPage = () => {
                         onChange={(e) => updateRule(rule.id, e.target.value)}
                       />
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Use CSV column names in curly braces. Example: if a recipient has name="alice", the system looks
-                        for "alice_invitation.pdf"
+                        Use CSV column names in curly braces. Example: if a
+                        recipient has name="alice", the system looks for
+                        "alice_invitation.pdf"
                       </p>
                     </div>
                   ))
