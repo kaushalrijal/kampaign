@@ -29,6 +29,9 @@ const ConfigurePage = () => {
     subject,
     htmlOutput,
     setRecipientHeader,
+    customEnabled,
+    broadcastSelected,
+    rules
   } = useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
@@ -98,6 +101,9 @@ const ConfigurePage = () => {
           subject,
           htmlOutput,
           recipientHeader,
+          customEnabled,
+          broadcastSelected,
+          rules
         })
       );
 
