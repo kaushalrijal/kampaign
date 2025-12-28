@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ContactRow } from "../types";
+import { ContactRow, Rule } from "../types";
 
 interface FileItem {
   file: File;
@@ -14,6 +14,9 @@ interface KampaignState {
     subject: string;
     htmlOutput: string;
     recipientHeader: string;
+    customEnabled: boolean;
+    attachmentMode: Set<string>;
+    rules: Rule[];
 
     setContacts: (contacts: ContactRow[])=>void;
     setHeaders: (headers: string[])=>void;
@@ -22,6 +25,9 @@ interface KampaignState {
     setHtmlOutput: (body: string) => void;
     setAttachments: (attachments: FileItem[] | ((prev: FileItem[]) => FileItem[])) => void;
     setRecipientHeader: (header: string) => void;
+    setCustomEnabled: (enabled: boolean) => void;
+    setAttachmentMode: (mode: Set<string>) => void;
+    setRules: (rules: Rule[]) => void;
 }
 
 export const useKampaignStore = create<KampaignState>((set) => ({
@@ -32,6 +38,9 @@ export const useKampaignStore = create<KampaignState>((set) => ({
     htmlOutput: "",
     attachments: [],
     recipientHeader: "",
+    customEnabled: false,
+    attachmentMode: new Set(),
+    rules: [],
 
     setContacts: (contacts: ContactRow[]) => set({contacts}),
     setHeaders: (headers: string[])=>set({headers}),
@@ -45,4 +54,8 @@ export const useKampaignStore = create<KampaignState>((set) => ({
           : attachments
       })),
     setRecipientHeader: (header: string) => set({recipientHeader: header}),
+    setCustomEnabled: (enabled: boolean) => set({customEnabled: enabled}),
+    setAttachmentMode: (mode: Set<string>) => set({attachmentMode: mode}),
+    setRules: (rules: Rule[]) => set({rules}),
+
 }))

@@ -5,13 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
+import { Rule } from "@/lib/types";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
-
-interface Rule {
-  id: string;
-  pattern: string;
-}
 
 const AttachmentsPage = () => {
   const [customEnabled, setCustomEnabled] = useState(false);
