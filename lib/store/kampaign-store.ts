@@ -15,7 +15,7 @@ interface KampaignState {
     htmlOutput: string;
     recipientHeader: string;
     customEnabled: boolean;
-    attachmentMode: Set<string>;
+    broadcastSelected: Set<string>;
     rules: Rule[];
 
     setContacts: (contacts: ContactRow[])=>void;
@@ -26,7 +26,7 @@ interface KampaignState {
     setAttachments: (attachments: FileItem[] | ((prev: FileItem[]) => FileItem[])) => void;
     setRecipientHeader: (header: string) => void;
     setCustomEnabled: (enabled: boolean) => void;
-    setAttachmentMode: (mode: Set<string>) => void;
+    setBroadcastSelected: (mode: Set<string>) => void;
     setRules: (rules: Rule[]) => void;
 }
 
@@ -39,7 +39,7 @@ export const useKampaignStore = create<KampaignState>((set) => ({
     attachments: [],
     recipientHeader: "",
     customEnabled: false,
-    attachmentMode: new Set(),
+    broadcastSelected: new Set(),
     rules: [],
 
     setContacts: (contacts: ContactRow[]) => set({contacts}),
@@ -55,7 +55,7 @@ export const useKampaignStore = create<KampaignState>((set) => ({
       })),
     setRecipientHeader: (header: string) => set({recipientHeader: header}),
     setCustomEnabled: (enabled: boolean) => set({customEnabled: enabled}),
-    setAttachmentMode: (mode: Set<string>) => set({attachmentMode: mode}),
+    setBroadcastSelected: (mode: Set<string>) => set({broadcastSelected: mode}),
     setRules: (rules: Rule[]) => set({rules}),
 
 }))

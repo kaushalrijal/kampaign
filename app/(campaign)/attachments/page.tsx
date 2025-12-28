@@ -10,13 +10,8 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const AttachmentsPage = () => {
-  const [customEnabled, setCustomEnabled] = useState(false);
-  const [broadcastSelected, setBroadcastSelected] = useState<Set<string>>(
-    new Set()
-  );
-  const [rules, setRules] = useState<Rule[]>([]);
 
-  const { attachments, setAttachments } = useKampaignStore();
+  const { attachments, setAttachments, customEnabled, setCustomEnabled, broadcastSelected, setBroadcastSelected,rules, setRules } = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -29,15 +24,13 @@ const AttachmentsPage = () => {
   };
 
   const toggleBroadcast = (id: string) => {
-    setBroadcastSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    const next = new Set(broadcastSelected);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setBroadcastSelected(next);
   };
 
   const removeFile = (id: string) => {
@@ -45,15 +38,15 @@ const AttachmentsPage = () => {
   };
 
   const addRule = () => {
-    setRules((prev) => [...prev, { id: `rule-${Date.now()}`, pattern: "" }]);
+    setRules([...rules, { id: `rule-${Date.now()}`, pattern: "" }]);
   };
 
   const updateRule = (id: string, pattern: string) => {
-    setRules((prev) => prev.map((r) => (r.id === id ? { ...r, pattern } : r)));
+    setRules(rules.map((r) => (r.id === id ? { ...r, pattern } : r)));
   };
 
   const removeRule = (id: string) => {
-    setRules((prev) => prev.filter((r) => r.id !== id));
+    setRules(rules.filter((r) => r.id !== id));
   };
 
   return (
@@ -85,9 +78,7 @@ const AttachmentsPage = () => {
               <Checkbox
                 id="customEnabled"
                 checked={customEnabled}
-                onCheckedChange={(checked) =>
-                  setCustomEnabled(checked as boolean)
-                }
+                onCheckedChange={(checked) => setCustomEnabled(Boolean(checked))}
               />
               <label
                 htmlFor="customEnabled"
