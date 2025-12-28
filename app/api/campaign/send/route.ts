@@ -18,9 +18,8 @@ export async function POST(req: Request) {
   }
 
   const { contacts, htmlOutput, subject, recipientHeader, customEnabled, broadcastSelected, rules } = JSON.parse(payloadRaw);
-  console.log("File rules here:------------------------------")
+  // TODO: UPDATE IMPLEMENTATION TO SUPPORT CUSTOM BROADCASTS
   console.log(customEnabled, broadcastSelected, rules);
-  console.log("personalization rule ends------------------------")
 
   const files = formData.getAll("attachments") as File[];
 
@@ -53,15 +52,15 @@ export async function POST(req: Request) {
 
   console.log(mailAttachments)
   // create transporter
-  // const transporter = await nodemailer.createTransport({
-  //   host: env.HOST,
-  //   port: env.PORT,
-  //   secure: false, // true for 465, false for other ports
-  //   auth: {
-  //     user: env.USER,
-  //     pass: env.APP_PASSWORD,
-  //   },
-  // });
+  const transporter = await nodemailer.createTransport({
+    host: env.HOST,
+    port: env.PORT,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: env.USER,
+      pass: env.APP_PASSWORD,
+    },
+  });
 
   for (const contact of contacts) {
     const eachBody = renderTemplate(htmlOutput, contact);
@@ -74,15 +73,15 @@ export async function POST(req: Request) {
     console.log("FILES: ", files);
     console.log("------");
 
-    // const sent = await transporter.sendMail({
-    //   from: env.USER,
-    //   to: contact[recipientHeader],
-    //   subject: eachSubject,
-    //   html: eachBody,
-    //   attachments: mailAttachments,
-    // });
+    const sent = await transporter.sendMail({
+      from: env.USER,
+      to: contact[recipientHeader],
+      subject: eachSubject,
+      html: eachBody,
+      attachments: mailAttachments,
+    });
 
-    // console.log("Message Sent: ", sent.messageId);
+    console.log("Message Sent: ", sent.messageId);
   }
 
   await fs.rm(tempPath, { recursive: true, force: true });
