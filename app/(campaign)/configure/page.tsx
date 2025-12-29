@@ -30,8 +30,7 @@ const ConfigurePage = () => {
     htmlOutput,
     setRecipientHeader,
     customEnabled,
-    broadcastSelected,
-    rules
+    rules,
   } = useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
@@ -92,18 +91,24 @@ const ConfigurePage = () => {
     try {
       setIsSending(true);
       const formData = new FormData();
+
+      const attachmentMeta = attachments.map((att) => ({
+        id: att.id,
+        name: att.file.name,
+        mode: att.mode,
+      }));
+
       formData.append(
         "payload",
         JSON.stringify({
           contacts,
-          attachments,
           headers,
           subject,
           htmlOutput,
           recipientHeader,
           customEnabled,
-          broadcastSelected,
-          rules
+          attachments: attachmentMeta,
+          rules,
         })
       );
 
