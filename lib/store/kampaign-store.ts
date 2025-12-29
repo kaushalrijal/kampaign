@@ -1,10 +1,7 @@
 import { create } from "zustand";
 import { ContactRow, Rule } from "../types";
+import { FileItem } from "../types";
 
-interface FileItem {
-  file: File;
-  id: string;
-}
 
 interface KampaignState {
     campaignName: string;
@@ -15,7 +12,6 @@ interface KampaignState {
     htmlOutput: string;
     recipientHeader: string;
     customEnabled: boolean;
-    broadcastSelected: Set<string>;
     rules: Rule[];
 
     setContacts: (contacts: ContactRow[])=>void;
@@ -26,7 +22,6 @@ interface KampaignState {
     setAttachments: (attachments: FileItem[] | ((prev: FileItem[]) => FileItem[])) => void;
     setRecipientHeader: (header: string) => void;
     setCustomEnabled: (enabled: boolean) => void;
-    setBroadcastSelected: (mode: Set<string>) => void;
     setRules: (rules: Rule[]) => void;
 }
 
@@ -39,7 +34,6 @@ export const useKampaignStore = create<KampaignState>((set) => ({
     attachments: [],
     recipientHeader: "",
     customEnabled: false,
-    broadcastSelected: new Set(),
     rules: [],
 
     setContacts: (contacts: ContactRow[]) => set({contacts}),
@@ -55,7 +49,6 @@ export const useKampaignStore = create<KampaignState>((set) => ({
       })),
     setRecipientHeader: (header: string) => set({recipientHeader: header}),
     setCustomEnabled: (enabled: boolean) => set({customEnabled: enabled}),
-    setBroadcastSelected: (mode: Set<string>) => set({broadcastSelected: mode}),
     setRules: (rules: Rule[]) => set({rules}),
 
 }))

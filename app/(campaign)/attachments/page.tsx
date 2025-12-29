@@ -5,33 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
-import { Rule } from "@/lib/types";
+import { FileItem, Rule } from "@/lib/types";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const AttachmentsPage = () => {
 
-  const { attachments, setAttachments, customEnabled, setCustomEnabled, broadcastSelected, setBroadcastSelected,rules, setRules } = useKampaignStore();
+  const { attachments, setAttachments, customEnabled, setCustomEnabled, rules, setRules } = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
-    const newFiles = selectedFiles.map((file) => ({
+    const newFiles:FileItem[] = selectedFiles.map((file) => ({
       file,
       id: `${file.name}-${Date.now()}-${Math.random()}`,
+      mode: "broadcast",
     }));
     console.log(newFiles);
     setAttachments((prev) => [...prev, ...newFiles]);
   };
 
   const toggleBroadcast = (id: string) => {
-    const next = new Set(broadcastSelected);
-    if (next.has(id)) {
-      next.delete(id);
-    } else {
-      next.add(id);
-    }
-    setBroadcastSelected(next);
-  };
+  setAttachments((prev) =>
+    prev.map((att) =>
+      att.id === id
+        ? {
+            ...att,
+            mode: att.mode === "broadcast"
+              ? "personalized"
+              : "broadcast",
+          }
+        : att
+    )
+  );
+};
 
   const removeFile = (id: string) => {
     setAttachments((prev) => prev.filter((file) => file.id !== id));
@@ -118,12 +124,12 @@ const AttachmentsPage = () => {
                         <Button
                           onClick={() => toggleBroadcast(item.id)}
                           className={`px-3 py-2 text-xs font-semibold border transition-colors whitespace-nowrap ${
-                            broadcastSelected.has(item.id)
+                            item.mode === "broadcast"
                               ? "bg-primary text-primary-foreground border-foreground"
                               : "border-border"
                           }`}
                         >
-                          {broadcastSelected.has(item.id)
+                          {item.mode === "broadcast"
                             ? "BROADCAST"
                             : "PERSONALIZE"}
                         </Button>
