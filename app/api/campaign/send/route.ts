@@ -17,12 +17,13 @@ export async function POST(req: Request) {
     );
   }
 
-  const { contacts, htmlOutput, subject, recipientHeader, customEnabled, broadcastSelected, rules } = JSON.parse(payloadRaw);
+  const { contacts, htmlOutput, subject, recipientHeader, customEnabled, rules, attachments } = JSON.parse(payloadRaw);
   // TODO: UPDATE IMPLEMENTATION TO SUPPORT CUSTOM BROADCASTS
-  console.log(customEnabled, broadcastSelected, rules);
-
+  console.log(customEnabled, rules);
+  console.log(attachments)
+  
   const files = formData.getAll("attachments") as File[];
-
+  
   // get environment variables and test
   const env = getEnvSMTPConfig();
   if (!env) {
