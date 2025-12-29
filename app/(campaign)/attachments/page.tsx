@@ -55,6 +55,10 @@ const AttachmentsPage = () => {
     setRules(rules.filter((r) => r.id !== id));
   };
 
+  const handleCustomToggle = (enabled: boolean) {
+    setCustomEnabled(enabled);
+  }
+
   return (
     <div className="space-y-8">
       <div>
@@ -84,7 +88,7 @@ const AttachmentsPage = () => {
               <Checkbox
                 id="customEnabled"
                 checked={customEnabled}
-                onCheckedChange={(checked) => setCustomEnabled(Boolean(checked))}
+                onCheckedChange={(checked) => handleCustomToggle(Boolean(checked))}
               />
               <label
                 htmlFor="customEnabled"
