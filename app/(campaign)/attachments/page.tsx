@@ -10,12 +10,18 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const AttachmentsPage = () => {
-
-  const { attachments, setAttachments, customEnabled, setCustomEnabled, rules, setRules } = useKampaignStore();
+  const {
+    attachments,
+    setAttachments,
+    customEnabled,
+    setCustomEnabled,
+    rules,
+    setRules,
+  } = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
-    const newFiles:FileItem[] = selectedFiles.map((file) => ({
+    const newFiles: FileItem[] = selectedFiles.map((file) => ({
       file,
       id: `${file.name}-${Date.now()}-${Math.random()}`,
       mode: "broadcast",
@@ -25,19 +31,17 @@ const AttachmentsPage = () => {
   };
 
   const toggleBroadcast = (id: string) => {
-  setAttachments((prev) =>
-    prev.map((att) =>
-      att.id === id
-        ? {
-            ...att,
-            mode: att.mode === "broadcast"
-              ? "personalized"
-              : "broadcast",
-          }
-        : att
-    )
-  );
-};
+    setAttachments((prev) =>
+      prev.map((att) =>
+        att.id === id
+          ? {
+              ...att,
+              mode: att.mode === "broadcast" ? "personalized" : "broadcast",
+            }
+          : att
+      )
+    );
+  };
 
   const removeFile = (id: string) => {
     setAttachments((prev) => prev.filter((file) => file.id !== id));
@@ -55,9 +59,16 @@ const AttachmentsPage = () => {
     setRules(rules.filter((r) => r.id !== id));
   };
 
-  const handleCustomToggle = (enabled: boolean) {
+  const handleCustomToggle = (enabled: boolean) => {
     setCustomEnabled(enabled);
-  }
+
+    setAttachments((prev) =>
+      prev.map((att) => ({
+        ...att,
+        mode: enabled ? "personalized" : "broadcast",
+      }))
+    );
+  };
 
   return (
     <div className="space-y-8">
@@ -88,7 +99,9 @@ const AttachmentsPage = () => {
               <Checkbox
                 id="customEnabled"
                 checked={customEnabled}
-                onCheckedChange={(checked) => handleCustomToggle(Boolean(checked))}
+                onCheckedChange={(checked) =>
+                  handleCustomToggle(Boolean(checked))
+                }
               />
               <label
                 htmlFor="customEnabled"
