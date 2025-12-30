@@ -19,6 +19,7 @@ export async function POST(req: Request) {
 
   const { contacts, htmlOutput, subject, recipientHeader, customEnabled, rules, attachments } = JSON.parse(payloadRaw);
   // TODO: UPDATE IMPLEMENTATION TO SUPPORT CUSTOM BROADCASTS
+  
   console.log(customEnabled, rules);
   console.log(attachments)
   
@@ -37,18 +38,15 @@ export async function POST(req: Request) {
   const tempPath = path.join(process.cwd(), "tmp", crypto.randomUUID())
   await fs.mkdir(tempPath, {recursive: true})
 
-  const mailAttachments = [];
+  const fileMap = new Map<string, string>();
 
-  for (const file of files){
+  for (const file of files) {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filePath = path.join(tempPath, `${crypto.randomUUID()}-${file.name}`)
+    const filePath = path.join(tempPath, `${crypto.randomUUID()}-${file.name}`);
 
     await fs.writeFile(filePath, buffer);
 
-    mailAttachments.push({
-      filename: file.name,
-      path: filePath
-    })
+    fileMap.set(file.name, filePath);
   }
 
   console.log(mailAttachments)
