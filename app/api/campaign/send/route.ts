@@ -3,7 +3,7 @@ import renderTemplate from "@/lib/template/render";
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import path from "path";
-import fs from "fs/promises"
+import fs from "fs/promises";
 
 export async function POST(req: Request) {
   // parse form data
@@ -17,26 +17,39 @@ export async function POST(req: Request) {
     );
   }
 
-  const { contacts, htmlOutput, subject, recipientHeader, customEnabled, rules, attachments } = JSON.parse(payloadRaw);
-  // TODO: UPDATE IMPLEMENTATION TO SUPPORT CUSTOM BROADCASTS
-  
-  console.log(customEnabled, rules);
-  console.log(attachments)
-  
+  const {
+    contacts,
+    htmlOutput,
+    subject,
+    recipientHeader,
+    customEnabled,
+    rules,
+    attachments,
+  } = JSON.parse(payloadRaw);
+
+  const broadcastMeta = attachments.filter((a: any) => a.mode === "broadcast");
+
+  const personalizedMeta = attachments.filter(
+    (a: any) => a.mode === "personalized"
+  );
+
   const files = formData.getAll("attachments") as File[];
-  
+
   // get environment variables and test
   const env = getEnvSMTPConfig();
   if (!env) {
-    return NextResponse.json({
-      success: false,
-      message: "SMTP NOT CONFIGURED!",
-    }, {status: 400});
+    return NextResponse.json(
+      {
+        success: false,
+        message: "SMTP NOT CONFIGURED!",
+      },
+      { status: 400 }
+    );
   }
 
   //  create temporary path
-  const tempPath = path.join(process.cwd(), "tmp", crypto.randomUUID())
-  await fs.mkdir(tempPath, {recursive: true})
+  const tempPath = path.join(process.cwd(), "tmp", crypto.randomUUID());
+  await fs.mkdir(tempPath, { recursive: true });
 
   const fileMap = new Map<string, string>();
 
@@ -49,7 +62,19 @@ export async function POST(req: Request) {
     fileMap.set(file.name, filePath);
   }
 
-  console.log(mailAttachments)
+  const broadcastAttachments = broadcastMeta
+    .map((meta: any) => {
+      const filePath = fileMap.get(meta.name);
+      if (!filePath) return null;
+
+      return {
+        filename: meta.name,
+        path: filePath,
+      };
+    })
+    .filter(Boolean);
+
+  console.log(broadcastAttachments);
   // create transporter
   const transporter = await nodemailer.createTransport({
     host: env.HOST,
@@ -77,7 +102,7 @@ export async function POST(req: Request) {
       to: contact[recipientHeader],
       subject: eachSubject,
       html: eachBody,
-      attachments: mailAttachments,
+      attachments: broadcastAttachments,
     });
 
     console.log("Message Sent: ", sent.messageId);
