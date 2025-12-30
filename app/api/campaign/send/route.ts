@@ -62,6 +62,7 @@ export async function POST(req: Request) {
     fileMap.set(file.name, filePath);
   }
 
+  // resolve broadcast attachments
   const broadcastAttachments = broadcastMeta
     .map((meta: any) => {
       const filePath = fileMap.get(meta.name);
@@ -75,6 +76,7 @@ export async function POST(req: Request) {
     .filter(Boolean);
 
   console.log(broadcastAttachments);
+  
   // create transporter
   const transporter = await nodemailer.createTransport({
     host: env.HOST,
@@ -86,15 +88,34 @@ export async function POST(req: Request) {
     },
   });
 
+
+  // MAINLOOP: Send email to each user in contacts
   for (const contact of contacts) {
+    // render body and subject
     const eachBody = renderTemplate(htmlOutput, contact);
     const eachSubject = renderTemplate(subject, contact);
+
+    // attach personalized attachments if any for each user
+    let attachmentsToSend = [...broadcastAttachments];
+    if (customEnabled) {
+      for (const rule of rules) {
+        const expectedName = renderTemplate(rule.pattern, contact);
+        const filePath = fileMap.get(expectedName);
+
+        if (filePath) {
+          attachmentsToSend.push({
+            filename: expectedName,
+            path: filePath,
+          });
+        }
+      }
+    }
 
     console.log("------");
     console.log("TO: ", contact[recipientHeader]);
     console.log("SUBJECT: ", eachSubject);
     console.log("BODY: ", eachBody);
-    console.log("FILES: ", files);
+    console.log("FILES: ", attachmentsToSend);
     console.log("------");
 
     const sent = await transporter.sendMail({
@@ -102,7 +123,7 @@ export async function POST(req: Request) {
       to: contact[recipientHeader],
       subject: eachSubject,
       html: eachBody,
-      attachments: broadcastAttachments,
+      attachments: attachmentsToSend,
     });
 
     console.log("Message Sent: ", sent.messageId);
