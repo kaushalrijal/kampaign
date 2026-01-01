@@ -39,6 +39,48 @@ const ConfigurePage = () => {
   const [isSending, setIsSending] = useState(false);
   const [randomContactIndex, setRandomContactIndex] = useState(0);
 
+  const validation = useMemo(
+    () =>
+      validateContent({
+        campaignName,
+        subject,
+        htmlOutput,
+        contacts,
+        recipientHeader,
+        attachments,
+      }),
+    [campaignName, subject, htmlOutput, contacts, recipientHeader, attachments]
+  );
+
+  const campaignStatus = useMemo(() => {
+    if (!validation.ok) {
+      return {
+        label: "NOT READY",
+        toneClassName: "text-destructive",
+        detail:
+          validation.errors.length === 1
+            ? validation.errors[0]
+            : `${validation.errors.length} required items missing`,
+      };
+    }
+
+    if (validation.warnings.length > 0) {
+      return {
+        label: "READY",
+        toneClassName: "text-primary",
+        detail: `${validation.warnings.length} warning${
+          validation.warnings.length === 1 ? "" : "s"
+        }`,
+      };
+    }
+
+    return {
+      label: "READY",
+      toneClassName: "text-primary",
+      detail: "all systems go",
+    };
+  }, [validation]);
+
   // Get a random contact for preview
   const randomContact = useMemo(() => {
     if (contacts.length === 0) return null;
@@ -160,9 +202,11 @@ const ConfigurePage = () => {
 
         <div className="border border-border p-6 bg-card">
           <Label>STATUS</Label>
-          <div className="text-xl font-black text-primary">READY</div>
+          <div className={`text-xl font-black ${campaignStatus.toneClassName}`}>
+            {campaignStatus.label}
+          </div>
           <div className="text-xs text-muted-foreground mt-2">
-            all systems go
+            {campaignStatus.detail}
           </div>
         </div>
       </div>
@@ -231,7 +275,7 @@ const ConfigurePage = () => {
           </div>
           <div className="p-8">
             <p className="text-sm text-muted-foreground mb-6">
-              Select the header that contains the recipients' email addresses.
+              Select the header that contains the recipients&apos; email addresses.
             </p>
             <Select value={recipientHeader} onValueChange={setRecipientHeader}>
               <SelectTrigger className="w-full sm:w-96">
