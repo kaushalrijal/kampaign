@@ -4,10 +4,11 @@ import { DragDropUpload } from "@/components/shared/drag-drop-upload";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useKampaignStore } from "@/lib/store/kampaign-store";
-import { FileItem, Rule } from "@/lib/types";
+import { FileItem } from "@/lib/types";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
 
 const AttachmentsPage = () => {
   const {
@@ -17,6 +18,7 @@ const AttachmentsPage = () => {
     setCustomEnabled,
     rules,
     setRules,
+    headers,
   } = useKampaignStore();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +28,6 @@ const AttachmentsPage = () => {
       id: `${file.name}-${Date.now()}-${Math.random()}`,
       mode: "broadcast",
     }));
-    console.log(newFiles);
     setAttachments((prev) => [...prev, ...newFiles]);
   };
 
@@ -179,6 +180,45 @@ const AttachmentsPage = () => {
               </div>
 
               <div className="px-4 md:px-6 pb-4 space-y-4">
+                <section
+                  aria-labelledby="available-headers-title"
+                  className="pt-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <Label>AVAILABLE HEADERS</Label>
+                    <span className="text-xs text-muted-foreground">
+                      Use these in your patterns
+                    </span>
+                  </div>
+                  <div
+                    className="flex flex-wrap gap-2 mt-2"
+                    role="list"
+                    aria-label="Available headers for personalization patterns"
+                  >
+                    {headers.length > 0 ? (
+                      headers.map((header) => (
+                        <Button
+                          key={header}
+                          type="button"
+                          disabled
+                          className="px-2 font-mono text-xs"
+                          variant={"secondary"}
+                          aria-label={`Available header ${header}`}
+                        >
+                          {"{" + header + "}"}
+                        </Button>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        <Link href={"/import"} className="underline">
+                          Import
+                        </Link>{" "}
+                        contacts to see available headers.
+                      </p>
+                    )}
+                  </div>
+                </section>
+
                 {rules.length === 0 ? (
                   <p className="text-xs text-muted-foreground py-4">
                     No rules yet. Click "ADD RULE" to create a pattern for
