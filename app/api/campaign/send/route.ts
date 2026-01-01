@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs/promises";
 import { slugify } from "@/lib/utils";
+import { logRecipientResult } from "@/lib/server/logger";
 
 export async function POST(req: Request) {
   // parse form data
@@ -29,6 +30,11 @@ export async function POST(req: Request) {
     campaignName
   } = JSON.parse(payloadRaw);
 
+    // create uuid for database
+  const campaignId = crypto.randomUUID();
+  const campaignSlug = `${slugify(campaignName)}-${campaignId.slice(0, 8)}`;
+
+  // get broadcase and personalized metadata
   const broadcastMeta = attachments.filter((a: any) => a.mode === "broadcast");
 
   const personalizedMeta = attachments.filter(
@@ -78,10 +84,6 @@ export async function POST(req: Request) {
     .filter(Boolean);
 
   console.log(broadcastAttachments);
-
-  // create uuid for database
-  const campaignId = crypto.randomUUID();
-  const campaignSlug = `${slugify(campaignName)}-${campaignId.slice(0, 8)}`;
   
   // create transporter
   const transporter = await nodemailer.createTransport({
@@ -94,6 +96,9 @@ export async function POST(req: Request) {
     },
   });
 
+  // counters
+  let sentCount = 0;
+  let failedCount = 0;
 
   // MAINLOOP: Send email to each user in contacts
   for (const contact of contacts) {
@@ -124,15 +129,36 @@ export async function POST(req: Request) {
     console.log("FILES: ", attachmentsToSend);
     console.log("------");
 
-    const sent = await transporter.sendMail({
-      from: env.USER,
-      to: contact[recipientHeader],
-      subject: eachSubject,
-      html: eachBody,
-      attachments: attachmentsToSend,
-    });
+    try {
+      const sent = await transporter.sendMail({
+        from: env.USER,
+        to: contact[recipientHeader],
+        subject: eachSubject,
+        html: eachBody,
+        attachments: attachmentsToSend,
+      });
 
-    console.log("Message Sent: ", sent.messageId);
+      sentCount++;
+
+      await logRecipientResult({
+        campaignId,
+        campaignSlug,
+        recipient: contact[recipientHeader],
+        status: "sent",
+        attachments: attachmentsToSend.map(a => a.filename),
+      });
+    } catch (err: any) {
+      failedCount++;
+
+      await logRecipientResult({
+        campaignId,
+        campaignSlug,
+        recipient: contact[recipientHeader],
+        status: "failed",
+        attachments: attachmentsToSend.map(a => a.filename),
+        error: err?.message ?? "Unknown error",
+      });
+    }
   }
 
   await fs.rm(tempPath, { recursive: true, force: true });
