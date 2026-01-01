@@ -35,6 +35,7 @@ const ConfigurePage = () => {
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
   >("idle");
+
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [randomContactIndex, setRandomContactIndex] = useState(0);
@@ -143,6 +144,7 @@ const ConfigurePage = () => {
       formData.append(
         "payload",
         JSON.stringify({
+          campaignName,
           contacts,
           headers,
           subject,

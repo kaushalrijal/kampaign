@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs/promises";
+import { slugify } from "@/lib/utils";
 
 export async function POST(req: Request) {
   // parse form data
@@ -25,6 +26,7 @@ export async function POST(req: Request) {
     customEnabled,
     rules,
     attachments,
+    campaignName
   } = JSON.parse(payloadRaw);
 
   const broadcastMeta = attachments.filter((a: any) => a.mode === "broadcast");
@@ -76,6 +78,10 @@ export async function POST(req: Request) {
     .filter(Boolean);
 
   console.log(broadcastAttachments);
+
+  // create uuid for database
+  const campaignId = crypto.randomUUID();
+  const campaignSlug = `${slugify(campaignName)}-${campaignId.slice(0, 8)}`;
   
   // create transporter
   const transporter = await nodemailer.createTransport({
