@@ -162,5 +162,18 @@ export async function POST(req: Request) {
   }
 
   await fs.rm(tempPath, { recursive: true, force: true });
-  return NextResponse.json({ success: "success" });
+  return NextResponse.json({
+    success: true,
+    campaign: {
+      id: campaignId,
+      slug: campaignSlug,
+      name: campaignName,
+      subject,
+      totalRecipients: contacts.length,
+      sentCount,
+      failedCount,
+      logFile: `logs/campaigns/${campaignSlug}.log`,
+      completedAt: Date.now(),
+    }
+  });
 }
