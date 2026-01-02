@@ -1,55 +1,27 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-
-interface Campaign {
-  id: string
-  name: string
-  subject: string
-  recipientCount: number
-  sentDate: string
-  status: "completed" | "draft"
-}
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { useCampaigns } from "@/hooks/use-kampaign";
 
 export default function CampaignList() {
-  const campaigns: Campaign[] = [
-    {
-      id: "1",
-      name: "Q1 Product Launch",
-      subject: "Introducing our new features",
-      recipientCount: 1250,
-      sentDate: "2024-03-15",
-      status: "completed",
-    },
-    {
-      id: "2",
-      name: "Summer Sale Announcement",
-      subject: "Limited time offer inside",
-      recipientCount: 2840,
-      sentDate: "2024-03-10",
-      status: "completed",
-    },
-    {
-      id: "3",
-      name: "Feedback Survey",
-      subject: "We want to hear from you",
-      recipientCount: 950,
-      sentDate: "2024-03-05",
-      status: "completed",
-    },
-  ]
+  const { campaigns, loading } = useCampaigns();
 
   return (
     <div className="space-y-6">
       <div className="border border-border p-6 bg-card">
-          <Button asChild>
-            <Link href="/import">
-              CREATE NEW CAMPAIGN
-            </Link>
-          </Button>
+        <Button asChild>
+          <Link href="/import">CREATE NEW CAMPAIGN</Link>
+        </Button>
       </div>
 
       <div className="border border-border bg-card">
@@ -58,43 +30,78 @@ export default function CampaignList() {
         </div>
 
         <div className="overflow-x-auto">
+          {loading && (
+            <div className="p-6 text-sm text-muted-foreground">
+              Loading campaigns…
+            </div>
+          )}
+
+          {!loading && campaigns.length === 0 && (
+            <div className="p-6 text-sm text-muted-foreground">
+              No campaigns yet. Create your first one.
+            </div>
+          )}
           <Table>
             <TableHeader className="border-b border-border bg-muted">
               <TableRow>
-                <TableHead className="text-left p-4 font-black text-xs tracking-widest">NAME</TableHead>
-                <TableHead className="text-left p-4 font-black text-xs tracking-widest">SUBJECT</TableHead>
-                <TableHead className="text-left p-4 font-black text-xs tracking-widest">RECIPIENTS</TableHead>
-                <TableHead className="text-left p-4 font-black text-xs tracking-widest">SENT</TableHead>
-                <TableHead className="text-left p-4 font-black text-xs tracking-widest">STATUS</TableHead>
-                <TableHead className="text-left p-4 font-black text-xs tracking-widest">ACTION</TableHead>
+                <TableHead className="text-left p-4 font-black text-xs tracking-widest">
+                  NAME
+                </TableHead>
+                <TableHead className="text-left p-4 font-black text-xs tracking-widest">
+                  SUBJECT
+                </TableHead>
+                <TableHead className="text-left p-4 font-black text-xs tracking-widest">
+                  RECIPIENTS
+                </TableHead>
+                <TableHead className="text-left p-4 font-black text-xs tracking-widest">
+                  SENT
+                </TableHead>
+                <TableHead className="text-left p-4 font-black text-xs tracking-widest">
+                  STATUS
+                </TableHead>
+                <TableHead className="text-left p-4 font-black text-xs tracking-widest">
+                  ACTION
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {campaigns.map((campaign, index) => (
-                <TableRow
-                  key={campaign.id}
-                  className={`border-b border-border hover:bg-muted/50 transition-colors ${
-                    index % 2 === 0 ? "bg-background" : "bg-secondary"
-                  }`}
-                >
-                  <TableCell className="p-4 font-semibold text-sm">{campaign.name}</TableCell>
-                  <TableCell className="p-4 text-sm text-muted-foreground font-mono">{campaign.subject}</TableCell>
-                  <TableCell className="p-4 text-sm font-mono">{campaign.recipientCount.toLocaleString()}</TableCell>
-                  <TableCell className="p-4 text-sm font-mono text-muted-foreground">{campaign.sentDate}</TableCell>
-                  <TableCell className="p-4">
-                    {/* <span className="inline-block px-3 py-1 border border-border text-xs font-semibold tracking-wide uppercase"> */}
-                    <Badge>
-                      {campaign.status}
-                    </Badge>
+              {campaigns.map((campaign, index) => {
+                const status =
+                  campaign.failedCount > 0 ? "completed" : "completed";
 
-                  </TableCell>
-                  <TableCell className="p-4">
-                    <Button variant={"outline"}>
-                      VIEW
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                return (
+                  <TableRow
+                    key={campaign.id}
+                    className={`border-b border-border hover:bg-muted/50 transition-colors ${
+                      index % 2 === 0 ? "bg-background" : "bg-secondary"
+                    }`}
+                  >
+                    <TableCell className="p-4 font-semibold text-sm">
+                      {campaign.name}
+                    </TableCell>
+
+                    <TableCell className="p-4 text-sm text-muted-foreground font-mono">
+                      {campaign.subject}
+                    </TableCell>
+
+                    <TableCell className="p-4 text-sm font-mono">
+                      {campaign.totalRecipients.toLocaleString()}
+                    </TableCell>
+
+                    <TableCell className="p-4 text-sm font-mono text-muted-foreground">
+                      {new Date(campaign.completedAt).toLocaleDateString()}
+                    </TableCell>
+
+                    <TableCell className="p-4">
+                      <Badge>{status}</Badge>
+                    </TableCell>
+
+                    <TableCell className="p-4">
+                      <Button variant="outline">VIEW</Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
@@ -104,5 +111,5 @@ export default function CampaignList() {
         </div>
       </div>
     </div>
-  )
+  );
 }
