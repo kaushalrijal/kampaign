@@ -164,11 +164,11 @@ export async function POST(req: Request) {
   await fs.rm(tempPath, { recursive: true, force: true });
   return NextResponse.json({
     success: true,
-    campaign: {
-      sentCount,
-      failedCount,
-      logFile: `logs/campaigns/${campaignSlug}.log`,
-      completedAt: Date.now(),
-    }
+    campaignId,
+    campaignSlug,
+    sentCount,
+    failedCount,
+    completedAt: Date.now(),
+    logFile: `logs/campaigns/${campaignSlug}.log`,
   });
 }

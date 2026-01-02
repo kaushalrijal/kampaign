@@ -17,6 +17,7 @@ import { validateContent } from "@/lib/validate";
 import { renderEmailPreview } from "@/lib/preview";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import { saveCampaign } from "@/lib/db/campaign";
 
 const ConfigurePage = () => {
   const {
@@ -159,9 +160,25 @@ const ConfigurePage = () => {
       attachments.forEach((att) => {
         formData.append("attachments", att.file);
       });
+      const createdAt = Date.now()
       const response = await sendCampaign(formData);
 
-      console.log(response);
+      // save to database if campaign is succesful
+      if (response.success) {
+        await saveCampaign({
+          id: response.campaignId as string,
+          slug: response.campaignSlug as string,
+          name: campaignName,
+          subject,
+          totalRecipients: contacts.length,
+          sentCount: response.sentCount as number,
+          failedCount: response.failedCount as number,
+          logFile: response.logFile as string,
+          createdAt,
+          completedAt: response.completedAt as number,
+        });
+      }
+      
       setIsPreviewDialogOpen(false);
       toast.success("Campaign sent successfully!");
     } catch (error) {
