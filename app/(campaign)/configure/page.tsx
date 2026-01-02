@@ -32,6 +32,7 @@ const ConfigurePage = () => {
     setRecipientHeader,
     customEnabled,
     rules,
+    reset,
   } = useKampaignStore();
   const [SMTPStatus, setSMTPStatus] = useState<
     "idle" | "testing" | "success" | "failed"
@@ -178,7 +179,7 @@ const ConfigurePage = () => {
           completedAt: response.completedAt as number,
         });
       }
-      
+      reset();
       setIsPreviewDialogOpen(false);
       toast.success("Campaign sent successfully!");
     } catch (error) {

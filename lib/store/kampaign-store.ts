@@ -23,9 +23,10 @@ interface KampaignState {
     setRecipientHeader: (header: string) => void;
     setCustomEnabled: (enabled: boolean) => void;
     setRules: (rules: Rule[]) => void;
+    reset: ()=>void;
 }
 
-export const useKampaignStore = create<KampaignState>((set) => ({
+export const useKampaignStore = create<KampaignState>((set, get, store) => ({
     campaignName: "",
     contacts: [],
     headers: [],
@@ -50,5 +51,5 @@ export const useKampaignStore = create<KampaignState>((set) => ({
     setRecipientHeader: (header: string) => set({recipientHeader: header}),
     setCustomEnabled: (enabled: boolean) => set({customEnabled: enabled}),
     setRules: (rules: Rule[]) => set({rules}),
-
+    reset: () => {set(store.getInitialState())}
 }))
