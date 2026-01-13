@@ -3,13 +3,6 @@
 import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import {
   Table,
   TableBody,
@@ -212,25 +205,6 @@ function formatDuration(ms: number) {
   return `${minutes}m ${seconds}s`;
 }
 
-function SummaryField({
-  label,
-  value,
-  monospace,
-}: {
-  label: string;
-  value: React.ReactNode;
-  monospace?: boolean;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="text-xs font-medium text-muted-foreground">{label}</div>
-      <div className={monospace ? "font-mono text-sm" : "text-sm font-medium"}>
-        {value}
-      </div>
-    </div>
-  );
-}
-
 export default function KampaignDetailPage({
   params,
 }: {
@@ -248,246 +222,189 @@ export default function KampaignDetailPage({
   const statusBadgeVariant = campaign.status === "FAILED" ? "destructive" : "default";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-            {campaign.name}
-          </h1>
-          <div className="text-sm text-muted-foreground">
-            <span className="mr-2">Campaign ID</span>
-            <span className="font-mono">{params.kampaignId}</span>
+      <div className="border border-border bg-card">
+        <div className="p-6 border-b border-border bg-secondary flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-black tracking-tight">
+              {campaign.name}
+            </h1>
+            <p className="text-xs text-muted-foreground font-mono mt-1">
+              {params.kampaignId}
+            </p>
+          </div>
+          <Badge variant={statusBadgeVariant}>{campaign.status}</Badge>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border border-b border-border">
+          <div className="p-6 text-center">
+            <div className="text-3xl font-black">{totalRecipients}</div>
+            <div className="text-xs text-muted-foreground mt-1">TOTAL</div>
+          </div>
+          <div className="p-6 text-center">
+            <div className="text-3xl font-black text-primary">{sentSuccessfully}</div>
+            <div className="text-xs text-muted-foreground mt-1">SENT</div>
+          </div>
+          <div className="p-6 text-center">
+            <div className="text-3xl font-black text-destructive">{failed}</div>
+            <div className="text-xs text-muted-foreground mt-1">FAILED</div>
+          </div>
+          <div className="p-6 text-center">
+            <div className="text-3xl font-black">{successRate.toFixed(0)}%</div>
+            <div className="text-xs text-muted-foreground mt-1">SUCCESS</div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={statusBadgeVariant}>{campaign.status}</Badge>
+
+        {/* Meta Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border">
+          <div className="bg-card p-4">
+            <Label className="text-xs text-muted-foreground">SENDER</Label>
+            <div className="font-mono text-sm mt-1">{campaign.senderEmail}</div>
+          </div>
+          <div className="bg-card p-4">
+            <Label className="text-xs text-muted-foreground">CREATED</Label>
+            <div className="font-mono text-sm mt-1">{formatTimestamp(campaign.createdAt)}</div>
+          </div>
+          <div className="bg-card p-4">
+            <Label className="text-xs text-muted-foreground">COMPLETED</Label>
+            <div className="font-mono text-sm mt-1">{formatTimestamp(campaign.completedAt)}</div>
+          </div>
+          <div className="bg-card p-4">
+            <Label className="text-xs text-muted-foreground">DURATION</Label>
+            <div className="font-mono text-sm mt-1">{formatDuration(durationMs)}</div>
+          </div>
         </div>
       </div>
 
-      {/* Summary */}
-      <Card>
-        <CardHeader className="border-b border-border bg-secondary">
-          <CardTitle className="text-sm font-black tracking-wide">SUMMARY</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <SummaryField
-              label="Total Recipients"
-              value={totalRecipients.toLocaleString()}
-              monospace
-            />
-            <SummaryField
-              label="Sent Successfully"
-              value={sentSuccessfully.toLocaleString()}
-              monospace
-            />
-            <SummaryField label="Failed" value={failed.toLocaleString()} monospace />
-            <SummaryField
-              label="Success Rate"
-              value={`${successRate.toFixed(1)}%`}
-              monospace
-            />
-            <SummaryField label="Subject" value={campaign.subject} />
-            <SummaryField
-              label="Created At"
-              value={formatTimestamp(campaign.createdAt)}
-              monospace
-            />
-            <SummaryField
-              label="Completed At"
-              value={formatTimestamp(campaign.completedAt)}
-              monospace
-            />
-            <SummaryField
-              label="Duration"
-              value={formatDuration(durationMs)}
-              monospace
-            />
-            <SummaryField label="Sender" value={campaign.senderEmail} />
+      {/* Subject */}
+      <div className="border border-border bg-card">
+        <div className="bg-secondary px-6 py-4 border-b border-border">
+          <Label className="text-xs font-black tracking-wide">SUBJECT</Label>
+        </div>
+        <div className="p-6">
+          <div className="font-mono text-sm">
+            {campaign.template.subjectTemplate || "(Empty subject)"}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Details */}
-      <Card>
-        <CardHeader className="border-b border-border bg-secondary">
-          <CardTitle className="text-sm font-black tracking-wide">DETAILS</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <Accordion type="multiple" className="w-full">
-            <AccordionItem value="template">
-              <AccordionTrigger>TEMPLATE</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest">
-                      Subject
-                    </Label>
-                    <div className="border border-border bg-muted p-3 font-mono text-sm min-h-12 flex items-center">
-                      {campaign.template.subjectTemplate || "(Empty subject)"}
-                    </div>
-                  </div>
+      {/* Body Preview */}
+      <div className="border border-border bg-card">
+        <div className="bg-secondary px-6 py-4 border-b border-border">
+          <Label className="text-xs font-black tracking-wide">BODY PREVIEW</Label>
+        </div>
+        <div className="p-6">
+          <div
+            className="prose prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: campaign.template.htmlTemplate }}
+          />
+        </div>
+      </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest">
-                      Body Preview
-                    </Label>
-                    <div className="border border-border bg-background p-4 min-h-64 max-h-96 overflow-y-auto overflow-x-hidden w-full">
-                      <div
-                        className="prose prose-sm max-w-none wrap-break-words"
-                        dangerouslySetInnerHTML={{ __html: campaign.template.htmlTemplate }}
-                      />
-                    </div>
+      {/* Two Column: Attachments & Rules */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Files */}
+        <div className="border border-border bg-card">
+          <div className="bg-secondary px-6 py-4 border-b border-border">
+            <Label className="text-xs font-black tracking-wide">ATTACHMENTS</Label>
+          </div>
+          <div className="divide-y divide-border">
+            {campaign.attachments.map((file) => (
+              <div key={file.id} className="p-4 flex items-center justify-between">
+                <div>
+                  <div className="font-mono text-sm">{file.fileName}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {formatBytes(file.bytes)}
                   </div>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
+                <Badge variant="outline">{file.type}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
 
-            <AccordionItem value="files">
-              <AccordionTrigger>FILES</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                      Attachment Rules
-                    </div>
-                    <Table>
-                      <TableHeader className="border-b border-border bg-muted">
-                        <TableRow>
-                          <TableHead className="p-4 font-black text-xs tracking-widest">
-                            RULE
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {campaign.attachmentRules.map((rule, index) => (
-                          <TableRow
-                            key={rule.id}
-                            className={`border-b border-border ${
-                              index % 2 === 0 ? "bg-background" : "bg-secondary"
-                            }`}
-                          >
-                            <TableCell className="p-4 font-mono text-sm text-muted-foreground">
-                              {rule.rule}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+        {/* Rules */}
+        <div className="border border-border bg-card">
+          <div className="bg-secondary px-6 py-4 border-b border-border">
+            <Label className="text-xs font-black tracking-wide">ATTACHMENT RULES</Label>
+          </div>
+          <div className="divide-y divide-border">
+            {campaign.attachmentRules.map((rule) => (
+              <div key={rule.id} className="p-4">
+                <div className="font-mono text-sm text-muted-foreground">{rule.rule}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-                  <div className="space-y-3">
-                    <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                      Files
-                    </div>
-                <Table>
-                  <TableHeader className="border-b border-border bg-muted">
-                    <TableRow>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        FILE NAME
-                      </TableHead>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        SIZE
-                      </TableHead>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        TYPE
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {campaign.attachments.map((file, index) => (
-                      <TableRow
-                        key={file.id}
-                        className={`border-b border-border ${
-                          index % 2 === 0 ? "bg-background" : "bg-secondary"
-                        }`}
-                      >
-                        <TableCell className="p-4 font-mono text-sm">
-                          {file.fileName}
-                        </TableCell>
-                        <TableCell className="p-4 font-mono text-sm text-muted-foreground">
-                          {formatBytes(file.bytes)}
-                        </TableCell>
-                        <TableCell className="p-4">
-                          <Badge variant="outline">{file.type}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="logs">
-              <AccordionTrigger>LOGS</AccordionTrigger>
-              <AccordionContent>
-                <Table>
-                  <TableHeader className="border-b border-border bg-muted">
-                    <TableRow>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        RECIPIENT
-                      </TableHead>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        STATUS
-                      </TableHead>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        ATTACHMENTS SENT
-                      </TableHead>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        ERROR
-                      </TableHead>
-                      <TableHead className="p-4 font-black text-xs tracking-widest">
-                        TIMESTAMP
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {campaign.logs.map((log, index) => (
-                      <TableRow
-                        key={`${log.recipientEmail}-${log.timestamp}`}
-                        className={`border-b border-border ${
-                          index % 2 === 0 ? "bg-background" : "bg-secondary"
-                        }`}
-                      >
-                        <TableCell className="p-4 font-mono text-sm">
-                          {log.recipientEmail}
-                        </TableCell>
-                        <TableCell className="p-4">
-                          <Badge
-                            variant={
-                              log.status === "failed" ? "destructive" : "secondary"
-                            }
-                          >
-                            {log.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="p-4 text-sm text-muted-foreground">
-                          {log.attachmentsSent.length > 0 ? (
-                            <span className="font-mono">
-                              {log.attachmentsSent.join(", ")}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="p-4 text-sm text-muted-foreground">
-                          {log.errorMessage ? log.errorMessage : "—"}
-                        </TableCell>
-                        <TableCell className="p-4 font-mono text-sm text-muted-foreground">
-                          {formatTimestamp(log.timestamp)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-      </Card>
+      {/* Logs */}
+      <div className="border border-border bg-card">
+        <div className="bg-secondary px-6 py-4 border-b border-border">
+          <Label className="text-xs font-black tracking-wide">DELIVERY LOGS</Label>
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="border-b border-border bg-muted">
+              <TableRow>
+                <TableHead className="p-4 font-black text-xs tracking-widest">
+                  RECIPIENT
+                </TableHead>
+                <TableHead className="p-4 font-black text-xs tracking-widest">
+                  STATUS
+                </TableHead>
+                <TableHead className="p-4 font-black text-xs tracking-widest">
+                  ATTACHMENTS
+                </TableHead>
+                <TableHead className="p-4 font-black text-xs tracking-widest">
+                  ERROR
+                </TableHead>
+                <TableHead className="p-4 font-black text-xs tracking-widest">
+                  TIME
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {campaign.logs.map((log, index) => (
+                <TableRow
+                  key={`${log.recipientEmail}-${log.timestamp}`}
+                  className={`border-b border-border ${
+                    index % 2 === 0 ? "bg-background" : "bg-secondary"
+                  }`}
+                >
+                  <TableCell className="p-4 font-mono text-sm">
+                    {log.recipientEmail}
+                  </TableCell>
+                  <TableCell className="p-4">
+                    <Badge
+                      variant={log.status === "failed" ? "destructive" : "secondary"}
+                    >
+                      {log.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="p-4 text-sm text-muted-foreground">
+                    {log.attachmentsSent.length > 0 ? (
+                      <span className="font-mono">
+                        {log.attachmentsSent.join(", ")}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
+                  <TableCell className="p-4 text-sm text-muted-foreground">
+                    {log.errorMessage || "—"}
+                  </TableCell>
+                  <TableCell className="p-4 font-mono text-sm text-muted-foreground">
+                    {formatTimestamp(log.timestamp)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 }
