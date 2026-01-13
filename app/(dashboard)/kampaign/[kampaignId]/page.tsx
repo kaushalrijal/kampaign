@@ -208,8 +208,10 @@ function formatDuration(ms: number) {
 export default function KampaignDetailPage({
   params,
 }: {
-  params: { kampaignId: string };
+  params: Promise<{ kampaignId: string }>;
 }) {
+  const { kampaignId } = React.use(params);
+  
   const totalRecipients = campaign.logs.length;
   const sentSuccessfully = campaign.logs.filter((l) => l.status === "success").length;
   const failed = campaign.logs.filter((l) => l.status === "failed").length;
@@ -231,7 +233,7 @@ export default function KampaignDetailPage({
               {campaign.name}
             </h1>
             <p className="text-xs text-muted-foreground font-mono mt-1">
-              {params.kampaignId}
+              {kampaignId}
             </p>
           </div>
           <Badge variant={statusBadgeVariant}>{campaign.status}</Badge>
