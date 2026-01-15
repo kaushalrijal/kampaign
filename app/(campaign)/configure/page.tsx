@@ -166,17 +166,32 @@ const ConfigurePage = () => {
 
       // save to database if campaign is succesful
       if (response.success) {
+        const attachmentRules = rules.map((rule) => ({
+          id: rule.id,
+          rule: rule.pattern,
+        }));
+        const attachmentDetails = attachments.map((att) => ({
+          id: att.id,
+          fileName: att.file.name,
+          bytes: att.file.size,
+          type: att.mode,
+        }));
+
         await saveCampaign({
           id: response.campaignId as string,
           slug: response.campaignSlug as string,
           name: campaignName,
           subject,
+          senderEmail: response.senderEmail as string,
           totalRecipients: contacts.length,
           sentCount: response.sentCount as number,
           failedCount: response.failedCount as number,
           logFile: response.logFile as string,
           createdAt,
           completedAt: response.completedAt as number,
+          htmlOutput,
+          attachments: attachmentDetails,
+          attachmentRules,
         });
       }
       reset();

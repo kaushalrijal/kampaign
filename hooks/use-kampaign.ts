@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllCampaigns } from "@/lib/db/campaign";
+import { getAllCampaigns, getCampaignById } from "@/lib/db/campaign";
 import { CampaignRecord } from "@/lib/db/types";
 
 export function useCampaigns() {
@@ -24,4 +24,42 @@ export function useCampaigns() {
   }, []);
 
   return { campaigns, loading };
+}
+
+export function useCampaign(kampaignId?: string) {
+  const [campaign, setCampaign] = useState<CampaignRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (!kampaignId) {
+      setCampaign(null);
+      setLoading(false);
+      return () => {
+        mounted = false;
+      };
+    }
+
+    setLoading(true);
+    getCampaignById(kampaignId)
+      .then((data) => {
+        if (mounted) {
+          setCampaign(data ?? null);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setCampaign(null);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [kampaignId]);
+
+  return { campaign, loading };
 }

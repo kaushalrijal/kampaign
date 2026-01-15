@@ -170,5 +170,6 @@ export async function POST(req: Request) {
     failedCount,
     completedAt: Date.now(),
     logFile: `logs/campaigns/${campaignSlug}.log`,
+    senderEmail: env.USER,
   });
 }
