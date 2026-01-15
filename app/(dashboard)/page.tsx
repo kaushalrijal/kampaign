@@ -97,7 +97,9 @@ export default function CampaignList() {
                     </TableCell>
 
                     <TableCell className="p-4">
-                      <Button variant="outline">VIEW</Button>
+                      <Link href={`/kampaign/${campaign.id}`}>
+                        <Button variant="outline">VIEW</Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 );
