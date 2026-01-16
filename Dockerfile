@@ -24,6 +24,9 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 
 RUN npm ci --omit=dev
 
+# Create logs and tmp directories for runtime
+RUN mkdir -p /app/logs/campaigns /app/tmp
+
 EXPOSE 3000
 
 CMD ["npm", "start"]
