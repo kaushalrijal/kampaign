@@ -70,6 +70,9 @@ const SettingsPage = () => {
           Configure your email provider credentials. Data is stored locally
           only.
         </p>
+        <p className="text-xs text-muted-foreground/60 mt-2 italic">
+          Note: This page is UI only for now. Please configure SMTP via .env file.
+        </p>
       </div>
 
       <div className="border border-border">
