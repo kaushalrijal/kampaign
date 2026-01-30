@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kampaign Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Fira+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body bgcolor="#ffffff" text="#111111" link="#111111" vlink="#111111" alink="#111111">
+  <a id="top"></a>
+
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">
+
+        <table width="980" border="2" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
+          <tr>
+            <td>
+              <table width="100%" border="0" cellpadding="10" cellspacing="0">
+                <tr>
+                  <td valign="top">
+                    <font face="DM Sans, Arial, sans-serif" size="6"><b>KAMPAIGN</b></font>
+                    <br>
+                    <font face="DM Sans, Arial, sans-serif" size="2" color="#444444">Local, secure, bulk email automation</font>
+                  </td>
+                  <td align="right" valign="top">
+                    <font face="Fira Mono, Courier New, monospace" size="2">
+                      VERSION 0.1.0 | NEXT.JS 16 + REACT 19 | MPL-2.0
+                    </font>
+                    <br>
+                    <font face="Fira Mono, Courier New, monospace" size="2">
+                      <a href="https://github.com/kaushalrijal/kampaign" target="_blank">github.com/kaushalrijal/kampaign</a>
+                    </font>
+                  </td>
+                </tr>
+              </table>
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr><td height="1" bgcolor="#d0d0d0"></td></tr>
+              </table>
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="260" valign="top" bgcolor="#f6f6f6">
+              <table width="100%" border="0" cellpadding="14" cellspacing="0">
+                <tr>
+                  <td>
+                    <font face="DM Sans, Arial, sans-serif" size="3"><b>CONTENTS</b></font>
+                    <hr color="#111111">
+                    <font face="DM Sans, Arial, sans-serif" size="2">
+                      <b>GETTING STARTED</b><br>
+                      <a href="#overview">Overview</a><br>
+                      <a href="#features">Features</a><br>
+                      <a href="#requirements">Requirements</a><br>
+                      <a href="#configuration">Configuration (.env)</a><br>
+                      <a href="#running">Run the App</a>
+                      <br><br>
+                      <b>CORE WORKFLOW</b><br>
+                      <a href="#dashboard">Dashboard</a><br>
+                      <a href="#import">Import Recipients</a><br>
+                      <a href="#design">Design Template</a><br>
+                      <a href="#attachments">Attachments</a><br>
+                      <a href="#configure">Configure &amp; Send</a><br>
+                      <a href="#settings">Settings</a>
+                      <br><br>
+                      <b>REFERENCE</b><br>
+                      <a href="#templates">Template Placeholders</a><br>
+                      <a href="#storage">Data &amp; Storage</a><br>
+                      <a href="#api">Internal API</a><br>
+                      <a href="#troubleshooting">Troubleshooting</a><br>
+                      <a href="#structure">Project Structure</a>
+                    </font>
+                    <br><br>
+                    <font face="DM Sans, Arial, sans-serif" size="3"><b>QUICK LINKS</b></font>
+                    <hr color="#111111">
+                    <font face="Fira Mono, Courier New, monospace" size="2">
+                      <a href="https://github.com/kaushalrijal/kampaign" target="_blank">GitHub Repo</a>
+                    </font>
+                    <br><br>
+                    <font face="DM Sans, Arial, sans-serif" size="2" color="#555555">
+                      STATUS: READY TO SEND<br>
+                      LOCAL-FIRST STORAGE
+                    </font>
+                  </td>
+                </tr>
+              </table>
+                  </td>
+                  <td width="1" bgcolor="#d0d0d0"></td>
+                  <td valign="top">
+              <table width="100%" border="0" cellpadding="14" cellspacing="0">
+                <tr>
+                  <td>
+
+                    <a id="overview"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>OVERVIEW</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          Kampaign runs locally and uses your SMTP credentials to send. Contacts, templates, and campaign history stay on your machine. There is no hosted backend in the loop. The source is available on GitHub if you want to review or extend it.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="features"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>FEATURES</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <table width="100%" border="0" cellpadding="4" cellspacing="0">
+                            <tr>
+                              <td width="50%" valign="top">
+                                <ul>
+                                  <li>CSV and Excel import</li>
+                                  <li>Template editor with placeholders</li>
+                                  <li>Preview before sending</li>
+                                  <li>Campaign history</li>
+                                </ul>
+                              </td>
+                              <td width="50%" valign="top">
+                                <ul>
+                                  <li>Broadcast and personalized attachments</li>
+                                  <li>SMTP connection test</li>
+                                  <li>Docker and Node.js support</li>
+                                  <li>Open source</li>
+                                </ul>
+                              </td>
+                            </tr>
+                          </table>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="requirements"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>REQUIREMENTS</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <ul>
+                            <li>Node.js 18+ for local dev</li>
+                            <li>Docker and Docker Compose if you prefer containers</li>
+                            <li>SMTP credentials from your email provider</li>
+                          </ul>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="configuration"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>CONFIGURATION (.env)</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <p>Create a <b>.env</b> file in the project root:</p>
+                          <font face="Fira Mono, Courier New, monospace">
+                            <pre>
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_email_here
+SMTP_APP_PASSWORD=your_app_password_here
+APP_PORT=3000
+                            </pre>
+                          </font>
+                          <p>Keep this file local. It is excluded from Git and Docker builds.</p>
+                          <p>SMTP transport uses secure=false by default. Use port 587 for TLS.</p>
+                          <p>Getting credentials:</p>
+                          <ul>
+                            <li>Gmail: create an App Password in your Google Account security settings. <a href="https://support.google.com/accounts/answer/185833" target="_blank">App Passwords guide</a></li>
+                            <li>Other providers: use their SMTP username and password or token from their help docs.</li>
+                          </ul>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="running"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>RUN THE APP</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <table width="100%" border="1" cellpadding="10" cellspacing="0">
+                            <tr>
+                              <td width="50%" valign="top">
+                                <b>Development (no Docker)</b>
+                                <font face="Fira Mono, Courier New, monospace">
+                                  <pre>
+npm install
+npm run dev
+                                  </pre>
+                                </font>
+                                <p>Open: http://localhost:3000</p>
+                              </td>
+                              <td width="50%" valign="top">
+                                <b>Production (no Docker)</b>
+                                <font face="Fira Mono, Courier New, monospace">
+                                  <pre>
+npm run build
+npm start
+                                  </pre>
+                                </font>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width="50%" valign="top">
+                                <b>Docker (Production)</b>
+                                <font face="Fira Mono, Courier New, monospace">
+                                  <pre>
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up
+                                  </pre>
+                                </font>
+                                <p>Open: http://localhost:3000</p>
+                              </td>
+                              <td width="50%" valign="top">
+                                <b>Docker (Development)</b>
+                                <font face="Fira Mono, Courier New, monospace">
+                                  <pre>
+docker compose -f docker-compose.dev.yml up
+                                  </pre>
+                                </font>
+                                <p>Hot reload with containerized dependencies.</p>
+                              </td>
+                            </tr>
+                          </table>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="dashboard"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>DASHBOARD</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          View past campaigns stored in IndexedDB. Each row shows name, subject, recipients, completion date, and status. Click VIEW to open details and logs.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="import"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>IMPORT RECIPIENTS</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>Formats</b>: CSV, XLS, XLSX. The first sheet is used.<br>
+                          <b>How it works</b>:
+                          <ul>
+                            <li>Each column becomes a template placeholder.</li>
+                            <li>A preview shows the first 10 rows and detected headers.</li>
+                          </ul>
+                          <b>Tip</b>: Make sure one column contains the recipient email address.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="design"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>DESIGN TEMPLATE</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>Subject</b>: supports placeholders like <font face="Fira Mono, Courier New, monospace">{name}</font>.<br>
+                          <b>Body</b>: rich text editor with headings, lists, alignment, links, and code blocks.
+                          <br><br>
+                          <b>Placeholders</b>:
+                          <ul>
+                            <li>Use <font face="Fira Mono, Courier New, monospace">{column_name}</font> to insert a field.</li>
+                            <li>Click a header chip to insert it, or type "{" to autocomplete.</li>
+                          </ul>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="attachments"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>ATTACHMENTS</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>Two modes</b>:
+                          <ul>
+                            <li><b>Broadcast</b>: sent to every recipient.</li>
+                            <li><b>Personalized</b>: matched per recipient using a filename rule.</li>
+                          </ul>
+                          <b>How to use</b>:
+                          <ol>
+                            <li>Upload files.</li>
+                            <li>Enable custom rules if you want a mix of broadcast and personalized files.</li>
+                            <li>Mark each file as Broadcast or Personalized.</li>
+                            <li>Add one or more rules. A rule is a filename pattern with placeholders.</li>
+                          </ol>
+                          <b>Rule examples</b>:
+                          <font face="Fira Mono, Courier New, monospace">
+                            <pre>
+{name}_invitation.pdf
+{student_id}_report.pdf
+                            </pre>
+                          </font>
+                          <b>Matching behavior</b>:
+                          <ul>
+                            <li>The rule is rendered for each recipient using their data.</li>
+                            <li>If a file with that exact name exists in your uploads, it is attached.</li>
+                            <li>If there is no match, that personalized file is skipped for that recipient.</li>
+                          </ul>
+                          <b>Tips</b>:
+                          <ul>
+                            <li>Use exact filenames, including extensions.</li>
+                            <li>Keep placeholder names identical to the column headers.</li>
+                          </ul>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="configure"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>CONFIGURE &amp; SEND</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>Summary</b>: counts recipients, attachments, and readiness.<br>
+                          <b>Campaign name</b>: used in history and log files.<br>
+                          <b>Email header</b>: choose the column that contains recipient email addresses.<br>
+                          <b>SMTP test</b>: verify credentials before sending.
+                          <br><br>
+                          <b>Send flow</b>:
+                          <ol>
+                            <li>Click <b>SEND NOW</b> to validate required fields.</li>
+                            <li>Preview a rendered email for a random contact.</li>
+                            <li>Use <b>RANDOMIZE</b> to preview another contact.</li>
+                            <li>Confirm <b>SEND</b> to deliver.</li>
+                          </ol>
+                          <b>Validation rules</b>:
+                          <ul>
+                            <li>Required: subject, at least one contact, selected recipient header.</li>
+                            <li>Warnings: missing campaign name, empty body, or no attachments.</li>
+                          </ul>
+                          <b>Schedule</b>: the button is UI only for now.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="settings"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>SETTINGS (SMTP CONFIGURATION)</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          This page collects SMTP host, port, username, and app password. Saving is UI only. SMTP tests use values from <font face="Fira Mono, Courier New, monospace">.env</font>.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="templates"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>TEMPLATE PLACEHOLDERS</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>Syntax</b>: use curly braces with column headers, for example <font face="Fira Mono, Courier New, monospace">{first_name}</font>.<br>
+                          If a placeholder does not match a column or the value is empty, it stays unchanged.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="storage"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>DATA &amp; STORAGE</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          Session data lives in a client store and resets after send or refresh. Campaign history is stored in IndexedDB. Delivery logs are saved to <font face="Fira Mono, Courier New, monospace">logs/campaigns</font>. Attachments are written to <font face="Fira Mono, Courier New, monospace">tmp</font> during send, then removed.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="api"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>INTERNAL API</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>GET /api/smtp/test</b> tests SMTP credentials from <font face="Fira Mono, Courier New, monospace">.env</font>.<br><br>
+                          <b>POST /api/campaign/send</b> accepts <font face="Fira Mono, Courier New, monospace">multipart/form-data</font> with a JSON payload and files, sends mail, and returns counts and log file path.<br><br>
+                          <b>GET /api/campaign/logs/[campaignSlug]</b> returns log entries for the campaign.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="troubleshooting"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>TROUBLESHOOTING</b></font></td></tr>
+                      <tr><td>
+                        <font face="DM Sans, Arial, sans-serif" size="2">
+                          <b>SMTP not configured</b><br>
+                          Check <font face="Fira Mono, Courier New, monospace">SMTP_HOST</font>, <font face="Fira Mono, Courier New, monospace">SMTP_PORT</font>, <font face="Fira Mono, Courier New, monospace">SMTP_USER</font>, and <font face="Fira Mono, Courier New, monospace">SMTP_APP_PASSWORD</font> in <font face="Fira Mono, Courier New, monospace">.env</font>.
+                          <br><br>
+                          <b>Gmail login fails</b><br>
+                          Use an App Password and enable 2FA.
+                          <br><br>
+                          <b>Placeholders not replaced</b><br>
+                          Match column names exactly, including case.
+                          <br><br>
+                          <b>Personalized attachments missing</b><br>
+                          Check that filenames match the rendered rule and include the extension.
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <a id="structure"></a>
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#ffffff">
+                      <tr><td bgcolor="#f2f2f2"><font face="DM Sans, Arial, sans-serif" size="3"><b>PROJECT STRUCTURE</b></font></td></tr>
+                      <tr><td>
+                        <font face="Fira Mono, Courier New, monospace" size="2">
+<pre>
+app/
+  (dashboard)/          Dashboard + campaign detail pages
+  (campaign)/           Import -> Design -> Attachments -> Configure flow
+  api/                  SMTP test, send, logs
+  settings/             SMTP settings UI (currently UI-only)
+components/
+  design/               Rich text editor
+  shared/               Header, sidebar, drag/drop, footer
+lib/
+  api.ts                Client API helpers
+  store/                Zustand state
+  template/             Placeholder rendering
+  server/               SMTP config + logging
+  db/                   IndexedDB (Dexie) storage
+</pre>
+                        </font>
+                      </td></tr>
+                    </table>
+
+                    <br>
+
+                    <table width="100%" border="2" cellpadding="12" cellspacing="0" bgcolor="#f7f7f7">
+                      <tr>
+                        <td align="left">
+                          <font face="DM Sans, Arial, sans-serif" size="2" color="#555555">
+                            Kampaign documentation - local-first bulk email automation
+                          </font>
+                        </td>
+                        <td align="right">
+                          <font face="Fira Mono, Courier New, monospace" size="2">
+                            <a href="#top">BACK TO TOP</a>
+                          </font>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
